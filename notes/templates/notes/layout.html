@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}JNNCE Notes{% endblock %}</title>
+</head>
+<body>
+    <nav>
+        <a href="{% url 'notes:home' %}">Home</a> |
+        <a href="#">Login</a> |
+        <a href="#">Register</a>
+    </nav>
+    
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+    
+    <footer>
+        &copy; 2024 JNNCE Notes. All rights reserved.
+    </footer>
+</body>
+</html>
