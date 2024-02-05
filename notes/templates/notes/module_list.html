@@ -1,0 +1,11 @@
+{% extends 'notes/layout.html' %}
+
+{% block content %}
+    <h1>Module List for {{course.code}}: {{course.name}}</h1>
+    <p>Select the module:</p>
+    <ul>
+        {% for module in course_modules %}
+            <li>Module {{module.number}}: ({{module.name}})</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

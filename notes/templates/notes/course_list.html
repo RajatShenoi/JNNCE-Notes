@@ -1,0 +1,11 @@
+{% extends 'notes/layout.html' %}
+
+{% block content %}
+    <h1>Course List for {{branch.code}}: {{branch.name}}</h1>
+    <p>Select the course:</p>
+    <ul>
+        {% for course in courses %}
+            <li><a href="{% url 'notes:display-module-list' branch.code course.code %}">{{course.code}}: ({{course.name}})</a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}
