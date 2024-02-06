@@ -21,6 +21,5 @@ from django.urls import include, path
 urlpatterns = [
     path("admin/", admin.site.urls),
 
-    # Include the notes app's URLs
     path("", include("notes.urls")),
 ]

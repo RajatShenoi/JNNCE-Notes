@@ -22,7 +22,7 @@ class Course(models.Model):
         return f"{self.branch.code}-{self.code}: {self.name}"
     
 class CourseModule(models.Model):
-    number = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    number = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(5)])
     name = models.CharField(max_length=100)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
 
@@ -31,3 +31,14 @@ class CourseModule(models.Model):
 
     def __str__(self):
         return f"{self.course.branch.code}-{self.course.code}-{self.number}: {self.name}"
+    
+class File(models.Model):
+    date_created = models.DateTimeField(auto_now_add=True)
+    file_url = models.URLField(null=True)
+    file_name = models.CharField(max_length=200, null=True)
+    file_extension = models.CharField(max_length=200, null=True)
+    course_module = models.ForeignKey(CourseModule, on_delete=models.CASCADE)
+    deleted = models.BooleanField(null=True, default=False)
+
+    def __str__(self):
+        return self.file_name

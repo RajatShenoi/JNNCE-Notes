@@ -1,11 +1,18 @@
-{% extends 'notes/layout.html' %}
+{% extends 'layout.html' %}
 
 {% block content %}
     <h1>Module List for {{course.code}}: {{course.name}}</h1>
+    <a href="">Upload</a>
     <p>Select the module:</p>
     <ul>
         {% for module in course_modules %}
-            <li>Module {{module.number}}: ({{module.name}})</li>
+            <li>{% if module.number != 0 %}Module {{module.number}}: {% endif %}{{module.name}}</li>
         {% endfor %}
     </ul>
+    <p>We depend on students like you to contribute to the notes and question papers present on this website.
+        If you find anything that is not available here, please consider contributing to the website by uploading 
+        the same. Small contributions such as uploading the Internal Examination question paper or the Semester Exam
+        question paper as soon as the examination is over goes a long way in helping the community.
+        We will be very greatful for the same. 
+    </p>
 {% endblock %}

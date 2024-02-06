@@ -27,6 +27,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# VARIABLES FOR AZURE STORAGE
+AZURE_STORAGE_ACCOUNT = "https://jnncenotes.blob.core.windows.net"
+AZURE_VAULT_ACCOUNT = "https://jnncenotes.vault.azure.net/"
+AZURE_STORAGE_KEY_NAME = "JNNCE-STORAGE-KEY"
+AZURE_APP_BLOB_NAME = "files"
+
 
 # Application definition
 
@@ -56,7 +62,9 @@ ROOT_URLCONF = "jnncenotes.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [
+            BASE_DIR / "templates",
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -123,3 +131,5 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+LOGIN_URL = 'notes:login'
