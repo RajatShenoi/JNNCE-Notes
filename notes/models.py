@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.contrib.auth.models import User
 
 # Create your models here.
 class Branch(models.Model):
@@ -30,15 +31,21 @@ class CourseModule(models.Model):
         verbose_name = "Module"
 
     def __str__(self):
-        return f"{self.course.branch.code}-{self.course.code}-{self.number}: {self.name}"
+        if self.number == 0:
+            s = f"{self.course.code}"
+        else:
+            s = f"{self.course.code}-{self.number}"
+        return f"{self.course.branch.code}-{s}: {self.name}"
     
 class File(models.Model):
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=True)
     date_created = models.DateTimeField(auto_now_add=True)
-    file_url = models.URLField(null=True)
-    file_name = models.CharField(max_length=200, null=True)
-    file_extension = models.CharField(max_length=200, null=True)
+    file_url = models.URLField()
+    file_name = models.CharField(max_length=200)
+    file_extension = models.CharField(max_length=200)
     course_module = models.ForeignKey(CourseModule, on_delete=models.CASCADE)
-    deleted = models.BooleanField(null=True, default=False)
+    approved = models.BooleanField(default=False)
+    deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return self.file_name

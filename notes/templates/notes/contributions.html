@@ -1,0 +1,11 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <h1>List of resources contributed by {{request.user}}:</h1>
+    <p>List of resources:</p>
+    <ul>
+        {% for file in files %}
+            <li>{{file.file_name}} | <a href="{% url 'notes:download-file' file.pk %}" target="_blank">download</a> | {{file.date_created}} | {% if file.approved %}Approved!{% else %}Approval Pending{% endif %}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

@@ -3,13 +3,14 @@
 {% block content %}
     <h1>Module List for {{course.code}}: {{course.name}}</h1>
     <a href="{% url 'notes:upload-file' course.code %}">Upload</a>
-    <p>Select the module:</p>
+    <p>List of files:</p>
     <ul>
-        {% for module in course_modules %}
-            <li><a href="{% url 'notes:display-file-list' branch.code course.code module.pk %}">{% if module.number != 0 %}Module {{module.number}}: {% endif %}{{module.name}}</a></li>
+        {% for file in files %}
+            <li>{{file.file_name}} | <a href="{% url 'notes:download-file' file.pk %}" target="_blank">download</a> | {{file.user}} | {{file.date_created}}</li>
         {% endfor %}
     </ul>
-    <p>We depend on students like you to contribute to the notes and question papers present on this website.
+    <p>
+        We depend on students like you to contribute to the notes and question papers present on this website.
         If you find anything that is not available here, please consider contributing to the website by uploading 
         the same. Small contributions such as uploading the Internal Examination question paper or the Semester Exam
         question paper as soon as the examination is over goes a long way in helping the community.

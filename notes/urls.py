@@ -7,6 +7,13 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('b/<str:branch_code>', views.displayCourseList, name='display-course-list'),
     path('b/<str:branch_code>/c/<str:course_code>', views.displayModuleList, name='display-module-list'),
+    path('b/<str:branch_code>/c/<str:course_code>/m/<str:pk>', views.displayFileList, name='display-file-list'),
+
+    path('contributed', views.contributions, name='contributions'),
+
+    # azure blob storage
+    path('upload/<str:course_code>', views.uploadFile, name='upload-file'),
+    path('download/<str:pk>', views.downloadFile, name='download-file'),
 
     # authentication
     path('register', views.userRegister, name='register'),
