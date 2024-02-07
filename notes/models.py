@@ -44,7 +44,8 @@ class File(models.Model):
     file_name = models.CharField(max_length=200)
     file_extension = models.CharField(max_length=200)
     course_module = models.ForeignKey(CourseModule, on_delete=models.CASCADE)
-    approved = models.BooleanField(default=False)
+    # 0 = pending, 1 = approved, 2 = duplicate, 3 = rejected
+    approved = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(2)])
     deleted = models.BooleanField(default=False)
 
     def __str__(self):
