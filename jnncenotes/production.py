@@ -110,6 +110,7 @@ DATABASES = {
         'PORT': '5432',
         'OPTIONS': {
             'sslmode': 'require',
+            'dbname': 'jnncenotes',
         },
     }
 }
