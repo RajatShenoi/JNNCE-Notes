@@ -21,18 +21,27 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-zj6)sll(z$5hzsl5(q9!&cd#bsv0vgm95y=@0%&d432g0)gyu!"
+SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [os.environ['WEBSITE_HOSTNAME']] if 'WEBSITE_HOSTNAME' in os.environ else []
+ALLOWED_HOSTS = ['https://jnncenotes.azurewebsites.net', 'jnncenotes.azurewebsites.net']
 
 # VARIABLES FOR AZURE STORAGE
-AZURE_STORAGE_ACCOUNT = "https://jnncenotes.blob.core.windows.net"
-AZURE_VAULT_ACCOUNT = "https://jnncenotes.vault.azure.net/"
-AZURE_STORAGE_KEY_NAME = "JNNCE-STORAGE-KEY"
-AZURE_APP_BLOB_NAME = "files"
+AZURE_STORAGE_ACCOUNT = os.environ.get("AZURE_STORAGE_ACCOUNT")
+AZURE_VAULT_ACCOUNT = os.environ.get("AZURE_VAULT_ACCOUNT")
+AZURE_STORAGE_KEY_NAME = os.environ.get("AZURE_STORAGE_KEY_NAME")
+AZURE_APP_BLOB_NAME = os.environ.get("AZURE_APP_BLOB_NAME")
+
+# Production settings
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+# SECURE_HSTS_SECONDS = 31536000
+SECURE_HSTS_SECONDS = 3600
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_SSL_REDIRECT = True
+SECURE_HSTS_PRELOAD = True
 
 
 # Application definition
@@ -50,6 +59,9 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+
+    # added whitenoise middleware
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -131,6 +143,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'  
+STATIC_ROOT = BASE_DIR / "staticfiles"
 STATIC_URL = "static/"
 
 # Default primary key field type

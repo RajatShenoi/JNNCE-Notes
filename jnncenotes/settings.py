@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-zj6)sll(z$5hzsl5(q9!&cd#bsv0vgm95y=@0%&d432g0)gyu!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['https://jnncenotes.azurewebsites.net', 'jnncenotes.azurewebsites.net']
+ALLOWED_HOSTS = []
 
 # VARIABLES FOR AZURE STORAGE
 AZURE_STORAGE_ACCOUNT = "https://jnncenotes.blob.core.windows.net"
