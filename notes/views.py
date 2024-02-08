@@ -5,9 +5,9 @@ from django.contrib import messages
 from django.contrib.auth import logout, login, authenticate
 from django.contrib.auth.decorators import login_required
 
-from pathlib import Path
-
-from notes.azure_file_controller import download_blob, upload_file_to_blob
+from azure.core.exceptions import ClientAuthenticationError, ResourceNotFoundError
+from notes.azure_file_controller import delete_blob, download_blob, upload_file_to_blob
+from notes.exceptions import UploadBlobError
 
 from .forms import LoginForm, RegisterForm, UploadFileForm
 from .models import Branch, Course, CourseModule, File
@@ -22,7 +22,11 @@ def home(request):
     })
 
 def displayCourseList(request, branch_code):
-    branch = Branch.objects.get(code=branch_code)
+    try:
+        branch = Branch.objects.get(code=branch_code)
+    except Branch.DoesNotExist:
+        raise Http404
+    
     courses = Course.objects.filter(branch=branch)
 
     return render(request, "notes/course_list.html", {
@@ -31,11 +35,14 @@ def displayCourseList(request, branch_code):
     })
 
 def displayModuleList(request, branch_code, course_code):
-    branch = Branch.objects.get(code=branch_code)
-    course = Course.objects.get(code=course_code)
+    try:
+        branch = Branch.objects.get(code=branch_code)
+        course = Course.objects.get(code=course_code)
+    except (Branch.DoesNotExist, Course.DoesNotExist):
+        raise Http404
 
     if course.branch != branch:
-        raise Http404("Course not found in the specified branch")
+        raise Http404
 
     course_modules = CourseModule.objects.filter(course=course)
 
@@ -46,17 +53,20 @@ def displayModuleList(request, branch_code, course_code):
     })
 
 def displayFileList(request, branch_code, course_code, pk):
-    branch = Branch.objects.get(code=branch_code)
-    course = Course.objects.get(code=course_code)
-    course_module = CourseModule.objects.get(pk=pk)
+    try:
+        branch = Branch.objects.get(code=branch_code)
+        course = Course.objects.get(code=course_code)
+        course_module = CourseModule.objects.get(pk=pk)
+    except (Branch.DoesNotExist, Course.DoesNotExist, CourseModule.DoesNotExist):
+        raise Http404
 
     if course.branch != branch:
-        raise Http404("Course not found in the specified branch")
+        raise Http404
 
     if course_module.course != course:
-        raise Http404("Module not found in the specified course")
+        raise Http404
 
-    files = File.objects.filter(course_module=course_module, approved=True, deleted=False).order_by('-date_created')
+    files = File.objects.filter(course_module=course_module, approved=1, deleted=False).order_by('-date_created')
 
     return render(request, "notes/file_list.html", {
         "course": course,
@@ -80,6 +90,7 @@ def userRegister(request):
             login(request, user)
             return redirect('notes:home')
         else:
+            messages.error(request, "Invalid form")
             return render(request, 'notes/register.html', {
                 "form": form,
             })
@@ -99,12 +110,16 @@ def userLogin(request):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
+                next = request.GET.get('next')
+                if next:
+                    return redirect(next)
                 return redirect('notes:home')
             else:
                 return render(request, 'notes/login.html', {
                     "form": form,
                 })
         else:
+            messages.error(request, "Invalid form")
             return render(request, 'notes/login.html', {
                 "form": form,
             })
@@ -115,8 +130,11 @@ def userLogOut(request):
 
 @login_required
 def uploadFile(request, course_code):
-    course = Course.objects.get(code=course_code)
-    course_modules = CourseModule.objects.filter(course=course).order_by('number')
+    try:
+        course = Course.objects.get(code=course_code)
+    except Course.DoesNotExist:
+        raise Http404
+    
     if request.method == "POST":
         form = UploadFileForm(course, request.POST, request.FILES)
         if form.is_valid():
@@ -129,26 +147,46 @@ def uploadFile(request, course_code):
                     "course": course,
                 })
             course_module = form.cleaned_data['module']
-
-            file_object = upload_file_to_blob(
-                file,
-                display_name,
-                request.user,
-                course_module,
-            )
-
-            if file_object is None:
-                messages.error(request, "File upload failed")
+            
+            try:
+                file_object = upload_file_to_blob(
+                    file,
+                    display_name,
+                    request.user,
+                    course_module,
+                )
+            except ClientAuthenticationError as e:
+                messages.error(request, f"{e.error}: {e.message}. Contact admin.")
                 return render(request, 'notes/upload.html', {
                     "form": form,
                     "course": course,
                 })
-            # TODO
-            # To be redirected to the files upload page.
-            return redirect('notes:home')
+            except ResourceNotFoundError as e:
+                messages.error(request, f"{e.error}: {e.message}. Contact admin.")
+                return render(request, 'notes/upload.html', {
+                    "form": form,
+                    "course": course,
+                })
+            except UploadBlobError:
+                messages.error(request, "File upload failed. Contact admin.")
+                return render(request, 'notes/upload.html', {
+                    "form": form,
+                    "course": course,
+                })
+            else:
+                if file_object is None:
+                    messages.error(request, "File upload failed")
+                    return render(request, 'notes/upload.html', {
+                        "form": form,
+                        "course": course,
+                    })
+            return redirect('notes:contributions')
         else:
-            # TODO
-            pass
+            messages.error(request, "Invalid form")
+            return render(request, 'notes/upload.html', {
+                "form": form,
+                "course": course,
+            })
     form = UploadFileForm(course)
     return render(request, 'notes/upload.html', {
         "form": form,
@@ -156,12 +194,29 @@ def uploadFile(request, course_code):
     })
 
 def downloadFile(request, pk):
-    file = File.objects.get(pk=pk)
+    try:
+        file = File.objects.get(pk=pk)
+    except File.DoesNotExist:
+        raise Http404
+    
+    if request.user != file.user and file.approved != 1:
+        raise Http404
+    elif request.user == file.user and file.approved != 1:
+        messages.error(request, "File can be downloaded only after it has been approved.")
+        return redirect('notes:contributions')
+
     file_name = f"{file.file_name}{file.file_extension}"
     file_type, _ = mimetypes.guess_type(file_name)
     url = file.file_url
     blob_name = url.split("/")[-1]
-    blob_content = download_blob(blob_name)
+    try:
+        blob_content = download_blob(blob_name)
+    except ClientAuthenticationError as e:
+        messages.error(request, f"{e.error}: {e.message}. Contact admin.")
+        return redirect('notes:contributions')
+    except ResourceNotFoundError as e:
+        messages.error(request, f"{e.error}: {e.message}. Contact admin.")
+        return redirect('notes:contributions')
     if blob_content:
         response = HttpResponse(blob_content.readall(), content_type=file_type)
         response['Content-Disposition'] = f'inline; filename={file_name}'
@@ -175,3 +230,30 @@ def contributions(request):
     return render(request, "notes/contributions.html", {
         "files": files,
     })
+
+@login_required
+def deleteFile(request, pk):
+    try:
+        file = File.objects.get(pk=pk)
+    except File.DoesNotExist:
+        raise Http404
+    
+    if file.user != request.user:
+        messages.error(request, "You are not authorized to delete this file")
+        return redirect('notes:contributions')
+    
+    if file.approved == 1:
+        messages.error(request, "File cannot be deleted once it has been approved. Please contact the admin.")
+        return redirect('notes:contributions')
+    
+    try:
+        delete_blob(file.file_url.split("/")[-1])
+        file.delete()
+    except ClientAuthenticationError as e:
+        messages.error(request, f"{e.error}: {e.message}. Contact admin.")
+        return redirect('notes:contributions')
+    except ResourceNotFoundError as e:
+        messages.error(request, f"{e.error}: {e.message}. Contact admin.")
+        return redirect('notes:contributions')
+    
+    return redirect('notes:contributions')
