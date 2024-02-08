@@ -1,11 +1,16 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-    <h1>List of resources contributed by {{request.user}}:</h1>
+    <h1>List of resources contributed by @{{request.user}}:</h1>
     <p>List of resources:</p>
     <ul>
         {% for file in files %}
-            <li>{{file.file_name}} | <a href="{% url 'notes:download-file' file.pk %}" target="_blank">download</a> | {{file.date_created}} | {% if file.approved == 0 %}Approval pending...{% elif file.approved == 1 %}Approved!{% elif file.approved == 2 %}Duplicate{% else %}Rejected{% endif %}</li>
+            <li>{{file.file_name}} | 
+                <a href="{% url 'notes:download-file' file.pk %}" target="_blank">download</a> | 
+                {{file.date_created}} | 
+                {% if file.approved == 0 %}Approval pending...{% elif file.approved == 1 %}Approved!{% elif file.approved == 2 %}Duplicate{% else %}Rejected{% endif %}
+                {% if file.approved == 0 %} | <a href="{% url 'notes:delete-file' file.pk %}">delete</a>{% endif %}
+            </li>
         {% endfor %}
     </ul>
 {% endblock %}

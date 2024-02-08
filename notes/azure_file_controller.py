@@ -7,6 +7,8 @@ from azure.keyvault.secrets import SecretClient
 from azure.storage.blob import BlobClient
 from django.conf import settings
 
+from notes.exceptions import NotAllowedExtenstionError, UploadBlobError
+
 from .models import File
 
 ALLOWED_EXTENTIONS = ['.pdf']
@@ -40,7 +42,12 @@ def download_blob(file):
         return
     blob_content = blob_client.download_blob()
     return blob_content
-    
+
+def delete_blob(file):
+    blob_client = create_blob_client(file)
+    if not blob_client.exists():
+        return
+    blob_client.delete_blob()
 
 def save_file_url_to_db(file_url, display_name, ext, user, course_module):
     new_file = File.objects.create(
@@ -56,7 +63,7 @@ def save_file_url_to_db(file_url, display_name, ext, user, course_module):
 def upload_file_to_blob(file, display_name, user, course_module):
 
     if not check_file_ext(file.name):
-        return
+        raise NotAllowedExtenstionError
 
     file_prefix = uuid.uuid4().hex
     ext = Path(file.name).suffix
@@ -64,7 +71,10 @@ def upload_file_to_blob(file, display_name, user, course_module):
     file_content = file.read()
     file_io = BytesIO(file_content)
     blob_client = create_blob_client(file_name=file_name)
-    blob_client.upload_blob(data=file_io)
+    d = blob_client.upload_blob(data=file_io)
+    try:
+        _ = d['etag']
+    except KeyError:
+        raise UploadBlobError
     file_object = save_file_url_to_db(blob_client.url, display_name, ext, user, course_module)
-
     return file_object
