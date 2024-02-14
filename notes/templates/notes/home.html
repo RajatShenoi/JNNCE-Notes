@@ -7,7 +7,7 @@
     </p>
     <ul>
         {% for branch in branches %}
-            <li><a href="{% url 'notes:display-course-list' branch.code %}">{{branch.name }} ({{ branch.code }})</a></li>
+            <li><a href="{% url 'notes:display-course-list' branch.code %}" class="link">{{branch.name }} ({{ branch.code }})</a></li>
         {% endfor %}
     </ul>
 {% endblock %}

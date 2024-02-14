@@ -1,34 +1,98 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>{% block title %}JNNCE Notes{% endblock %}</title>
     {% load static %}
+    <title>{% block title %}JNNCE Notes{% endblock %}</title>
+    <script src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8939658231109065"crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/theme-change@2.0.2/index.js"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+    <meta name="viewport" content="width=device-width" inital-scale="1.0" />
 </head>
-<body>
-    <nav>
-        <a href="{% url 'notes:home' %}">Home</a> |
-        {% if request.user.is_authenticated %}
-            <a>Welcome @{{request.user.username}}</a> |
-            <a href="{% url 'notes:contributions' %}">My contributions</a> |
-            <a href="{% url 'notes:logout' %}">Logout</a>
-        {% else %}
-            <a href="{% url 'notes:login' %}">Login</a> |
-            <a href="{% url 'notes:register' %}">Register</a>
-        {% endif %}
+<body class="container mx-auto">
+    <nav class="navbar mb-2 shadow-lg rounded-box">
+        <div class="flex-none px-2 mx-2">
+            <span class="text-lg font-bold"> JNNCE Notes </span>
+        </div>
+        <div class="flex-1 px-2 mx-2 justify-end">
+            <div class="items-stretch hidden lg:flex">
+                <a class="btn btn-ghost btn-sm rounded-btn" href="{% url 'notes:home' %}"> Home </a>
+                {% if not request.user.is_authenticated %}
+                    <a class="btn btn-ghost btn-sm rounded-btn" href="{% url 'notes:login' %}"> Login </a>
+                    <a class="btn btn-ghost btn-sm rounded-btn" href="{% url 'notes:register' %}"> Register </a>
+                {% else %}
+                <div class="dropdown dropdown-end">
+                    <div tabindex="0" class="btn btn-ghost btn-sm rounded-btn">@{{request.user.username}}</div>
+                    <ul tabindex="0" class="p-2 shadow menu dropdown-content bg-base-100 rounded-box w-52">
+                        <li><a class="btn btn-ghost btn-sm rounded-btn" href="{% url 'notes:contributions' %}">My contributions</a></li>
+                        <li><a class="btn btn-ghost btn-sm rounded-btn" href="{% url 'notes:logout' %}">Logout</a></li>
+                    </ul>
+                </div>
+                {% endif %}
+                <a class="btn btn-ghost btn-sm rounded-btn"> Contact </a>
+            </div>
+            <div class="flex items-stretch">
+                <div class="dropdown dropdown-end">
+                    <div tabindex="0" class="m-1 btn">Change Theme</div>
+                    <ul tabindex="0" class="p-2 shadow menu dropdown-content bg-base-100 rounded-box w-52" data-choose-theme="">
+                        <li><a data-set-theme="masum">Masum</a></li>
+                        <li><a data-set-theme="emerald">Emerald</a></li>
+                        <li><a data-set-theme="light">Light</a></li>
+                        <li><a data-set-theme="dark">Dark</a></li>
+                        <li><a data-set-theme="cupcake">Dupcake</a></li>
+                        <li><a data-set-theme="bumblebee">Bumblebee</a></li>
+                        <li><a data-set-theme="aqua">Aqua</a></li>
+                        <li><a data-set-theme="corporate">Corporate</a></li>
+                        <li><a data-set-theme="synthwave">Synthwave</a></li>
+                        <li><a data-set-theme="retro">Retro</a></li>
+                        <li><a data-set-theme="cyberpunk">Cyberpunk</a></li>
+                        <li><a data-set-theme="valentine">Valentine</a></li>
+                        <li><a data-set-theme="halloween">Halloween</a></li>
+                        <li><a data-set-theme="garden">Garden</a></li>
+                        <li><a data-set-theme="forest">Forest</a></li>
+                        <li><a data-set-theme="lofi">Lofi</a></li>
+                        <li><a data-set-theme="pastel">Pastel</a></li>
+                        <li><a data-set-theme="fantasy">Fantasy</a></li>
+                        <li><a data-set-theme="wireframe">Wireframe</a></li>
+                        <li><a data-set-theme="black">Black</a></li>
+                        <li><a data-set-theme="luxury">Luxury</a></li>
+                        <li><a data-set-theme="dracula">Dracula</a></li>
+                        <li><a data-set-theme="cmyk">Cmyk</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </nav>
     
-    <main>
+    <main class="px-2">
         {% for message in messages %}
-            <ul>
-                <li>{{ message }}</li>
-            </ul>
+        <div class="p-2">
+            <div role="alert" class="alert alert-{{message.tags}}">
+                {% if message.tags == 'error' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6 hidden md:flex" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                {% endif %}
+                {% if message.tags == 'success' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6 hidden md:flex" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                {% endif %}
+                {% if message.tags == 'info' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-current shrink-0 w-6 h-6 hidden md:flex"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                {% endif %}
+                {% if message.tags == 'warning' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24 hidden md:flex"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                {% endif %}
+                <span>{{ message }}</span>
+            </div>
+        </div>
         {% endfor %}
         {% block content %}
         {% endblock %}
     </main>
     
-    <footer>
-        &copy; 2024 JNNCE Notes. All rights reserved.
-    </footer>
+    <footer class="footer footer-center p-4 bg-base-300 text-base-content">
+        <aside>
+          <p>Copyright © 2024 - All right reserved by Rajat Shenoi</p>
+        </aside>
+      </footer>
 </body>
 </html>
+
+<!-- LEARN EASY -->

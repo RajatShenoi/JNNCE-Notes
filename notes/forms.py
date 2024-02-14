@@ -5,8 +5,22 @@ from django.contrib.auth.forms import UserCreationForm
 from notes.models import Course, CourseModule
 
 class LoginForm(forms.Form):
-    username = forms.CharField(max_length=150)
-    password = forms.CharField(max_length=150, widget=forms.PasswordInput)
+    username = forms.CharField(
+        max_length=150, 
+        widget=forms.TextInput(attrs={
+                'placeholder': 'Username',
+                'class': 'grow-0',
+                'autocomplete': 'off',
+            }
+        )
+    )
+    password = forms.CharField(
+        max_length=150, widget=forms.PasswordInput(attrs={
+                'placeholder': 'Password',
+                'class': 'grow-0',
+            }
+        )
+    )
 
 class RegisterForm(UserCreationForm):
     class Meta:

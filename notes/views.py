@@ -115,6 +115,7 @@ def userLogin(request):
                     return redirect(next)
                 return redirect('notes:home')
             else:
+                messages.error(request, "Invalid username or password")
                 return render(request, 'notes/login.html', {
                     "form": form,
                 })
