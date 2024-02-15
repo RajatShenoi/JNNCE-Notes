@@ -1,16 +1,47 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-    <h1>List of resources contributed by @{{request.user}}:</h1>
-    <p>List of resources:</p>
-    <ul>
-        {% for file in files %}
-            <li>{{file.file_name}} | 
-                <a href="{% url 'notes:download-file' file.pk %}" {% if file.approved == 1 %}target="_blank"{% endif %}>download</a> | 
-                {{file.date_created}} | 
-                {% if file.approved == 0 %}Approval pending...{% elif file.approved == 1 %}Approved!{% elif file.approved == 2 %}Duplicate{% else %}Rejected{% endif %}
-                {% if file.approved == 0 %} | <a href="{% url 'notes:delete-file' file.pk %}">delete</a>{% endif %}
-            </li>
-        {% endfor %}
-    </ul>
+    <div class="overflow-x-auto">
+        <table class="table">
+          <!-- head -->
+            <thead>
+            <tr>
+                <th>File Name</th>
+                <th>Course and Module Name</th>
+                <th>Timestamp</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for file in files %}
+                <tr>
+                    <td>{{file.file_name}}</td>
+                    <td>{{file.course_module.course.code}} - {{file.course_module.name}}</td>
+                    <td>{{file.date_created}}</td>
+                    <td>
+                        {% if file.approved == 0 %}
+                            Pending approval...
+                        {% elif file.approved == 1 %}
+                            Approved!
+                        {% elif file.approved == 2 %}
+                            Duplicate
+                        {% else %}
+                            Rejected
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if file.approved == 0 %}
+                            <a href="{% url 'notes:delete-file' file.pk %}" class="text-error">Delete</a>
+                        {% elif file.approved == 1 %}
+                            <a href="{% url 'notes:download-file' file.pk %}" target="_blank">Download</a>
+                        {% else %}
+                            NA
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}

@@ -53,7 +53,7 @@ class UploadFileForm(forms.Form):
         self.fields['module'] = forms.ModelChoiceField(
             queryset=CourseModule.objects.filter(course=course).order_by('number'),
             widget=forms.Select(attrs={
-                    'class': 'select select-bordered max-w-xs',
+                    'class': 'select select-bordered',
                     'style': 'max-width: 90vw;'
                 }
             )
@@ -63,7 +63,8 @@ class UploadFileForm(forms.Form):
             widget=forms.TextInput(attrs={
                     'placeholder': 'File Name',
                     'autocomplete': 'off',
-                    'style': 'max-width: 90vw;'
+                    'style': 'max-width: 90vw;',
+                    'class': 'grow'
                 }
             )
         )

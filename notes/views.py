@@ -306,8 +306,12 @@ def contributions(request):
     }
     files = File.objects.filter(user=request.user).order_by('-date_created')
 
+    if len(files) == 0:
+        messages.info(request, "You have not contributed any files yet.")
+    
     return render(request, "notes/contributions.html", {
         "files": files,
+        "crumbs": crumbs,
     })
 
 @login_required
