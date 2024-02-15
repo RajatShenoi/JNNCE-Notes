@@ -12,7 +12,7 @@ urlpatterns = [
     path('my-contributions', views.contributions, name='contributions'),
 
     # azure blob storage
-    path('upload/<str:course_code>', views.uploadFile, name='upload-file'),
+    path('contribute/<str:course_code>', views.uploadFile, name='upload-file'),
     path('download/<str:pk>', views.downloadFile, name='download-file'),
     path('delete/<str:pk>', views.deleteFile, name='delete-file'),
 

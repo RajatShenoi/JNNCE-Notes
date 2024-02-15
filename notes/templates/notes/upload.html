@@ -1,12 +1,26 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-    <h2>You're uploading a file to {{course.code}} - {{course.name}}</h2>
-    <p>
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <input type="submit" value="Upload">
-        </form>
-    </p>
+<div class="flex justify-center p-2">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="label">
+            <span class="label-text-alt">Select the module you want to upload to</span>
+        </div>
+        <label>
+            {{ form.module }}
+        </label>
+        <div class="label">
+            <span class="label-text-alt">Give a name to the file. This is the name that will be shown to other users while downloading after it is approved.</span>
+        </div>
+        <label class="input input-bordered flex items-center">
+            {{ form.name }}
+        </label>
+        <div class="label">
+            <span class="label-text-alt">Select one file. Please note, only <span class="text-success">.pdf</span> files are allowed, and the file size must be <span class="text-success">less than 5MB</span></span>
+        </div>
+        {{ form.file }}
+        <input class="btn btn-accent" type="submit" value="Upload">
+    </form>
+</div>
 {% endblock %}

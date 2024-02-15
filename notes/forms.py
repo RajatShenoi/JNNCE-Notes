@@ -50,7 +50,27 @@ class RegisterForm(UserCreationForm):
 class UploadFileForm(forms.Form):
     def __init__(self, course : Course, *args, **kwargs):
         super(UploadFileForm, self).__init__(*args, **kwargs)
-        self.fields['module'] = forms.ModelChoiceField(queryset=CourseModule.objects.filter(course=course).order_by('number'))
-        self.fields['name'] = forms.CharField(max_length=100)
-        self.fields['file'] = forms.FileField()
+        self.fields['module'] = forms.ModelChoiceField(
+            queryset=CourseModule.objects.filter(course=course).order_by('number'),
+            widget=forms.Select(attrs={
+                    'class': 'select select-bordered'
+                }
+            )
+        )
+        self.fields['name'] = forms.CharField(
+            max_length=100,
+            widget=forms.TextInput(attrs={
+                    'placeholder': 'File Name',
+                    'autocomplete': 'off',
+                }
+            )
+        )
+        self.fields['file'] = forms.FileField(
+            allow_empty_file=False, 
+            required=True,
+            widget=forms.FileInput(attrs={
+                    'class': 'file-input file-input-bordered',
+                }
+            )
+        )
         

@@ -15,7 +15,7 @@ class Branch(models.Model):
     
 class Course(models.Model):
     name = models.CharField(max_length=100)
-    code = models.CharField(max_length=10)
+    code = models.CharField(max_length=20)
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
     credits = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(4)])
 
@@ -46,7 +46,6 @@ class File(models.Model):
     course_module = models.ForeignKey(CourseModule, on_delete=models.CASCADE)
     # 0 = pending, 1 = approved, 2 = duplicate, 3 = rejected
     approved = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(2)])
-    deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return self.file_name

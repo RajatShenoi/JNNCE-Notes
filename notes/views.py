@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from azure.core.exceptions import ClientAuthenticationError, ResourceNotFoundError
 from django.urls import reverse
 from notes.azure_file_controller import delete_blob, download_blob, upload_file_to_blob
-from notes.exceptions import UploadBlobError
+from notes.exceptions import NotAllowedExtenstionError, UploadBlobError
 
 from .forms import LoginForm, RegisterForm, UploadFileForm
 from .models import Branch, Course, CourseModule, File
@@ -82,7 +82,7 @@ def displayFileList(request, branch_code, course_code, pk):
     if course_module.course != course:
         raise Http404
 
-    files = File.objects.filter(course_module=course_module, approved=1, deleted=False).order_by('-date_created')
+    files = File.objects.filter(course_module=course_module, approved=1).order_by('-date_created')
 
     crumbs = {
         "path": {
@@ -122,7 +122,10 @@ def userRegister(request):
                 "form": form,
                 "crumbs": crumbs,
             })
-    
+        
+    if request.user.is_authenticated:
+        messages.info(request, "You are already logged in")
+        return redirect('notes:home')
     form = RegisterForm()
     return render(request, 'notes/register.html', {
         "form": form,
@@ -162,6 +165,9 @@ def userLogin(request):
                 "form": form,
             })
     
+    if request.user.is_authenticated:
+        messages.info(request, "You are already logged in")
+        return redirect('notes:home')
     form = LoginForm()
     return render(request, 'notes/login.html', {
         "form": form,
@@ -179,6 +185,14 @@ def uploadFile(request, course_code):
     except Course.DoesNotExist:
         raise Http404
     
+    crumbs = {
+        "path": {
+            "Home": reverse("notes:home"),
+            f"{course.branch.code}": reverse("notes:display-course-list", args=[course.branch.code]),
+        },
+        "current": "Contribute",
+    }
+    
     if request.method == "POST":
         form = UploadFileForm(course, request.POST, request.FILES)
         if form.is_valid():
@@ -189,6 +203,7 @@ def uploadFile(request, course_code):
                 return render(request, 'notes/upload.html', {
                     "form": form,
                     "course": course,
+                    "crumbs": crumbs,
                 })
             course_module = form.cleaned_data['module']
             
@@ -204,18 +219,28 @@ def uploadFile(request, course_code):
                 return render(request, 'notes/upload.html', {
                     "form": form,
                     "course": course,
+                    "crumbs": crumbs,
                 })
             except ResourceNotFoundError as e:
                 messages.error(request, f"{e.error}: {e.message}. Contact admin.")
                 return render(request, 'notes/upload.html', {
                     "form": form,
                     "course": course,
+                    "crumbs": crumbs,
                 })
             except UploadBlobError:
                 messages.error(request, "File upload failed. Contact admin.")
                 return render(request, 'notes/upload.html', {
                     "form": form,
                     "course": course,
+                    "crumbs": crumbs,
+                })
+            except NotAllowedExtenstionError:
+                messages.error(request, "File type not allowed. Only .pdf files are allowed.")
+                return render(request, 'notes/upload.html', {
+                    "form": form,
+                    "course": course,
+                    "crumbs": crumbs,
                 })
             else:
                 if file_object is None:
@@ -223,6 +248,7 @@ def uploadFile(request, course_code):
                     return render(request, 'notes/upload.html', {
                         "form": form,
                         "course": course,
+                        "crumbs": crumbs,
                     })
             messages.success(request, "File uploaded successfully. A moderator will need to approve the file before it is made public.")
             return redirect('notes:contributions')
@@ -231,11 +257,13 @@ def uploadFile(request, course_code):
             return render(request, 'notes/upload.html', {
                 "form": form,
                 "course": course,
+                "crumbs": crumbs,
             })
     form = UploadFileForm(course)
     return render(request, 'notes/upload.html', {
         "form": form,
         "course": course,
+        "crumbs": crumbs,
     })
 
 def downloadFile(request, pk):

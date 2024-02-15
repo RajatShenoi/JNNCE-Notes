@@ -10,11 +10,17 @@
 </head>
 <body class="mx-auto">
     <nav class="navbar mb-2 shadow-lg rounded-box">
+        <input id="my-drawer-3" type="checkbox" class="drawer-toggle" /> 
+        <div class="flex-none md:hidden">
+            <label for="my-drawer-3" aria-label="open sidebar" class="btn btn-square btn-ghost">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-6 h-6 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </label>
+        </div> 
         <div class="flex-none px-2 mx-2">
             <span class="text-lg font-bold">Learn Easy</span>
         </div>
         <div class="flex-1 px-2 mx-2 justify-end">
-            <div class="items-stretch hidden lg:flex">
+            <div class="items-stretch hidden md:flex">
                 <a class="btn btn-ghost btn-sm rounded-btn" href="{% url 'notes:home' %}"> Home </a>
                 {% if not request.user.is_authenticated %}
                     <a class="btn btn-ghost btn-sm rounded-btn" href="{% url 'notes:login' %}"> Login </a>
@@ -34,36 +40,55 @@
                 <div class="dropdown dropdown-end">
                     <div tabindex="0" class="m-1 btn">Change Theme</div>
                     <ul tabindex="0" class="p-2 shadow menu dropdown-content bg-base-100 rounded-box w-52" data-choose-theme="">
-                        <li><a data-set-theme="masum">Masum</a></li>
-                        <li><a data-set-theme="emerald">Emerald</a></li>
-                        <li><a data-set-theme="light">Light</a></li>
-                        <li><a data-set-theme="dark">Dark</a></li>
-                        <li><a data-set-theme="cupcake">Dupcake</a></li>
-                        <li><a data-set-theme="bumblebee">Bumblebee</a></li>
-                        <li><a data-set-theme="aqua">Aqua</a></li>
-                        <li><a data-set-theme="corporate">Corporate</a></li>
-                        <li><a data-set-theme="synthwave">Synthwave</a></li>
-                        <li><a data-set-theme="retro">Retro</a></li>
-                        <li><a data-set-theme="cyberpunk">Cyberpunk</a></li>
-                        <li><a data-set-theme="valentine">Valentine</a></li>
-                        <li><a data-set-theme="halloween">Halloween</a></li>
-                        <li><a data-set-theme="garden">Garden</a></li>
-                        <li><a data-set-theme="forest">Forest</a></li>
-                        <li><a data-set-theme="lofi">Lofi</a></li>
-                        <li><a data-set-theme="pastel">Pastel</a></li>
-                        <li><a data-set-theme="fantasy">Fantasy</a></li>
-                        <li><a data-set-theme="wireframe">Wireframe</a></li>
-                        <li><a data-set-theme="black">Black</a></li>
-                        <li><a data-set-theme="luxury">Luxury</a></li>
-                        <li><a data-set-theme="dracula">Dracula</a></li>
-                        <li><a data-set-theme="cmyk">Cmyk</a></li>
+                        <li><a data-set-theme="light">light</a></li>
+                        <li><a data-set-theme="dark">dark</a></li>
+                        <li><a data-set-theme="cupcake">cupcake</a></li>
+                        <li><a data-set-theme="bumblebee">bumblebee</a></li>
+                        <li><a data-set-theme="emerald">emerald</a></li>
+                        <li><a data-set-theme="corporate">corporate</a></li>
+                        <li><a data-set-theme="synthwave">synthwave</a></li>
+                        <li><a data-set-theme="retro">retro</a></li>
+                        <li><a data-set-theme="cyberpunk">cyberpunk</a></li>
+                        <li><a data-set-theme="valentine">valentine</a></li>
+                        <li><a data-set-theme="halloween">halloween</a></li>
+                        <li><a data-set-theme="garden">garden</a></li>
+                        <li><a data-set-theme="forest">forest</a></li>
+                        <li><a data-set-theme="aqua">aqua</a></li>
+                        <li><a data-set-theme="lofi">lofi</a></li>
+                        <li><a data-set-theme="pastel">pastel</a></li>
+                        <li><a data-set-theme="fantasy">fantasy</a></li>
+                        <li><a data-set-theme="wireframe">wireframe</a></li>
+                        <li><a data-set-theme="black">black</a></li>
+                        <li><a data-set-theme="luxury">luxury</a></li>
+                        <li><a data-set-theme="dracula">dracula</a></li>
+                        <li><a data-set-theme="cmyk">cmyk</a></li>
+                        <li><a data-set-theme="autumn">autumn</a></li>
+                        <li><a data-set-theme="business">business</a></li>
                     </ul>
                 </div>
             </div>
         </div>
+        <div class="drawer-side">
+            <label for="my-drawer-3" aria-label="close sidebar" class="drawer-overlay"></label> 
+            <ul class="menu p-4 w-80 min-h-full bg-base-100 text-base-content">
+                <!-- Sidebar content here -->
+                <div class="flex-none px-2 mx-2">
+                    <span class="text-lg font-bold">Learn Easy</span>
+                </div>
+                <div class="divider"></div>
+                <li><a href="{% url 'notes:home' %}"> Home </a></li>
+                {% if not request.user.is_authenticated %}
+                    <li><a href="{% url 'notes:login' %}"> Login </a></li>
+                    <li><a href="{% url 'notes:register' %}"> Register </a><li>
+                {% else %}
+                    <li><a href="{% url 'notes:contributions' %}">My contributions</a></li>
+                    <li><a href="{% url 'notes:logout' %}">Logout</a></li>
+                {% endif %}
+            </ul>
+        </div>
     </nav>
     
-    <main class="p-2">
+    <main class="px-5">
         {% for message in messages %}
         <div class="p-2">
             <div role="alert" class="alert alert-{{message.tags}}">
@@ -105,9 +130,9 @@
     
     <footer class="footer footer-center p-4 bg-base-300 text-base-content">
         <aside>
-          <p>Copyright © 2024 - All right reserved by Rajat Shenoi</p>
+            <p>Copyright © 2024 - All right reserved by Rajat Shenoi</p>
         </aside>
-      </footer>
+    </footer>
 </body>
 </html>
 
