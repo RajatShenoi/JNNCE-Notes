@@ -9,7 +9,6 @@ class LoginForm(forms.Form):
         max_length=150, 
         widget=forms.TextInput(attrs={
                 'placeholder': 'Username',
-                'class': 'grow-0',
                 'autocomplete': 'off',
             }
         )
@@ -17,15 +16,36 @@ class LoginForm(forms.Form):
     password = forms.CharField(
         max_length=150, widget=forms.PasswordInput(attrs={
                 'placeholder': 'Password',
-                'class': 'grow-0',
             }
         )
     )
 
 class RegisterForm(UserCreationForm):
+
+    def __init__(self, *args, **kwargs):
+        super(RegisterForm, self).__init__(*args, **kwargs)
+        self.fields['email'].required = True
+        self.fields['password1'].widget.attrs['placeholder'] = 'Password'
+        self.fields['password2'].widget.attrs['placeholder'] = 'Confirm Password'
     class Meta:
         model = User
         fields = ['username', 'email', 'password1', 'password2']
+        widgets = {
+            'username': forms.TextInput(attrs={
+                'placeholder': 'Username',
+                'autocomplete': 'off',
+            }),
+            'email': forms.EmailInput(attrs={
+                'placeholder': 'Email',
+                'autocomplete': 'on',
+            }),
+            'password1': forms.PasswordInput(attrs={
+                'placeholder': 'Password',
+            }),
+            'password2': forms.PasswordInput(attrs={
+                'placeholder': 'Confirm Password',
+            }),
+        }
 
 class UploadFileForm(forms.Form):
     def __init__(self, course : Course, *args, **kwargs):

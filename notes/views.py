@@ -6,6 +6,7 @@ from django.contrib.auth import logout, login, authenticate
 from django.contrib.auth.decorators import login_required
 
 from azure.core.exceptions import ClientAuthenticationError, ResourceNotFoundError
+from django.urls import reverse
 from notes.azure_file_controller import delete_blob, download_blob, upload_file_to_blob
 from notes.exceptions import UploadBlobError
 
@@ -22,6 +23,12 @@ def home(request):
     })
 
 def displayCourseList(request, branch_code):
+    crumbs = {
+        "path": {
+            "Home": reverse("notes:home"),
+        },
+        "current": f"{branch_code}",
+    }
     try:
         branch = Branch.objects.get(code=branch_code)
     except Branch.DoesNotExist:
@@ -32,9 +39,17 @@ def displayCourseList(request, branch_code):
     return render(request, "notes/course_list.html", {
         "branch": branch,
         "courses": courses,
+        "crumbs": crumbs,
     })
 
 def displayModuleList(request, branch_code, course_code):
+    crumbs = {
+        "path": {
+            "Home": reverse("notes:home"),
+            f"{branch_code}": reverse("notes:display-course-list", args=[branch_code]),
+        },
+        "current": f"{course_code}",
+    }
     try:
         branch = Branch.objects.get(code=branch_code)
         course = Course.objects.get(code=course_code)
@@ -50,6 +65,7 @@ def displayModuleList(request, branch_code, course_code):
         "branch": branch,
         "course": course,
         "course_modules": course_modules,
+        "crumbs": crumbs,
     })
 
 def displayFileList(request, branch_code, course_code, pk):
@@ -68,19 +84,29 @@ def displayFileList(request, branch_code, course_code, pk):
 
     files = File.objects.filter(course_module=course_module, approved=1, deleted=False).order_by('-date_created')
 
+    crumbs = {
+        "path": {
+            "Home": reverse("notes:home"),
+            f"{branch_code}": reverse("notes:display-course-list", args=[branch_code]),
+            f"{course_code}": reverse("notes:display-module-list", args=[branch_code, course_code])
+        },
+        "current": f"{course_module.name}",
+    }
+
     return render(request, "notes/file_list.html", {
         "course": course,
         "course_module": course_module,
         "files": files,
+        "crumbs": crumbs,
     })
 
 def userRegister(request):
-    if request.method == "GET":
-        form = RegisterForm()
-        return render(request, 'notes/register.html', {
-            "form": form,
-        })
-    
+    crumbs = {
+        "path": {
+            "Home": reverse("notes:home"),
+        },
+        "current": "Register",
+    }
     if request.method == "POST":
         form = RegisterForm(request.POST)
         if form.is_valid():
@@ -90,18 +116,27 @@ def userRegister(request):
             login(request, user)
             return redirect('notes:home')
         else:
-            messages.error(request, "Invalid form")
+            for error in form.errors:
+                messages.error(request, f"{error}: {form.errors[error][0]}")
             return render(request, 'notes/register.html', {
                 "form": form,
+                "crumbs": crumbs,
             })
     
-def userLogin(request):
-    if request.method == "GET":
-        form = LoginForm()
-        return render(request, 'notes/login.html', {
-            "form": form,
-        })
+    form = RegisterForm()
+    return render(request, 'notes/register.html', {
+        "form": form,
+        "crumbs": crumbs,
+    })
     
+def userLogin(request):
+    crumbs = {
+        "path": {
+            "Home": reverse("notes:home"),
+        },
+        "current": "Login",
+    }
+
     if request.method == "POST":
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -118,12 +153,20 @@ def userLogin(request):
                 messages.error(request, "Invalid username or password")
                 return render(request, 'notes/login.html', {
                     "form": form,
+                    "crumbs": crumbs,
                 })
         else:
-            messages.error(request, "Invalid form")
+            for error in form.errors:
+                messages.error(request, f"{error}: {form.errors[error][0]}")
             return render(request, 'notes/login.html', {
                 "form": form,
             })
+    
+    form = LoginForm()
+    return render(request, 'notes/login.html', {
+        "form": form,
+        "crumbs": crumbs,
+    })
 
 def userLogOut(request):
     logout(request)
@@ -181,6 +224,7 @@ def uploadFile(request, course_code):
                         "form": form,
                         "course": course,
                     })
+            messages.success(request, "File uploaded successfully. A moderator will need to approve the file before it is made public.")
             return redirect('notes:contributions')
         else:
             messages.error(request, "Invalid form")
@@ -226,6 +270,12 @@ def downloadFile(request, pk):
 
 @login_required
 def contributions(request):
+    crumbs = {
+        "path": {
+            "Home": reverse("notes:home"),
+        },
+        "current": "My Contributions",
+    }
     files = File.objects.filter(user=request.user).order_by('-date_created')
 
     return render(request, "notes/contributions.html", {

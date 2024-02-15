@@ -6,7 +6,7 @@
     <ul>
         {% for file in files %}
             <li>{{file.file_name}} | 
-                <a href="{% url 'notes:download-file' file.pk %}" target="_blank">download</a> | 
+                <a href="{% url 'notes:download-file' file.pk %}" {% if file.approved == 1 %}target="_blank"{% endif %}>download</a> | 
                 {{file.date_created}} | 
                 {% if file.approved == 0 %}Approval pending...{% elif file.approved == 1 %}Approved!{% elif file.approved == 2 %}Duplicate{% else %}Rejected{% endif %}
                 {% if file.approved == 0 %} | <a href="{% url 'notes:delete-file' file.pk %}">delete</a>{% endif %}

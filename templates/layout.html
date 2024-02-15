@@ -2,16 +2,16 @@
 <html lang="en">
 <head>
     {% load static %}
-    <title>{% block title %}JNNCE Notes{% endblock %}</title>
+    <title>{% block title %}Learn Easy{% endblock %}</title>
     <script src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8939658231109065"crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/theme-change@2.0.2/index.js"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
     <meta name="viewport" content="width=device-width" inital-scale="1.0" />
 </head>
-<body class="container mx-auto">
+<body class="mx-auto">
     <nav class="navbar mb-2 shadow-lg rounded-box">
         <div class="flex-none px-2 mx-2">
-            <span class="text-lg font-bold"> JNNCE Notes </span>
+            <span class="text-lg font-bold">Learn Easy</span>
         </div>
         <div class="flex-1 px-2 mx-2 justify-end">
             <div class="items-stretch hidden lg:flex">
@@ -63,7 +63,7 @@
         </div>
     </nav>
     
-    <main class="px-2">
+    <main class="p-2">
         {% for message in messages %}
         <div class="p-2">
             <div role="alert" class="alert alert-{{message.tags}}">
@@ -83,6 +83,22 @@
             </div>
         </div>
         {% endfor %}
+        {% if crumbs %}
+            <div class="text-sm breadcrumbs">
+                <ul>
+                    {% for key, value in crumbs.items %}
+                        {% if key == "path" %}
+                            {% for k, val in value.items %}
+                                <li><a class="link" href='{{val}}'>{{k}}</a></li>
+                            {% endfor %}
+                        {% endif %}
+                        {% if key == "current" %}
+                            <li>{{value}}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
         {% block content %}
         {% endblock %}
     </main>
