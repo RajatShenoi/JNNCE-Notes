@@ -30,11 +30,9 @@ def create_blob_client(file_name):
         credential=storage_credentials.value,
     )
 
-
 def check_file_ext(path):
     ext = Path(path).suffix
     return ext in ALLOWED_EXTENTIONS
-
 
 def download_blob(file):
     blob_client = create_blob_client(file)

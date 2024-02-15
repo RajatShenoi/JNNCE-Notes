@@ -178,7 +178,7 @@ def userLogOut(request):
     logout(request)
     return redirect('notes:home')
 
-@login_required
+# @login_required
 def uploadFile(request, course_code):
     try:
         course = Course.objects.get(code=course_code)
