@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 class Branch(models.Model):
     name = models.CharField(max_length=100)
     code = models.CharField(max_length=10)
+    order = models.IntegerField()
 
     class Meta:
         verbose_name_plural = "branches"
@@ -27,6 +28,11 @@ class CourseModule(models.Model):
     name = models.CharField(max_length=100)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
 
+    def calculateFiles(self):
+        return File.objects.filter(course_module = self, approved = 1).count()
+
+    no_of_files = property(calculateFiles)
+
     class Meta:
         verbose_name = "Module"
 
@@ -45,7 +51,10 @@ class File(models.Model):
     file_extension = models.CharField(max_length=200)
     course_module = models.ForeignKey(CourseModule, on_delete=models.CASCADE)
     # 0 = pending, 1 = approved, 2 = duplicate, 3 = rejected
-    approved = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(2)])
+    approved = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(3)])
+    number_of_downloads = models.IntegerField(default=0)
 
     def __str__(self):
+        if self.approved == 0:
+            return f"{self.file_name[:10] + "..."} (pending)"
         return self.file_name

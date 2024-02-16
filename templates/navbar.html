@@ -1,0 +1,87 @@
+<nav class="navbar mb-2 shadow-lg rounded-box">
+    <!-- Drawer button -->
+    <input id="my-drawer-3" type="checkbox" class="drawer-toggle" /> 
+    <div class="flex-none md:hidden">
+        <label for="my-drawer-3" aria-label="open sidebar" class="btn btn-square btn-ghost">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-6 h-6 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </label>
+    </div> 
+    <!-- Website Title -->
+
+    <div class="flex-none px-2 mx-2">
+        <span class="text-lg font-bold">{{website_name}}</span>
+    </div>
+
+    <!-- Navbar Links -->
+    <div class="flex-1 px-2 mx-2 justify-end">
+        <div class="items-stretch hidden md:flex">
+            <a class="btn btn-ghost btn-sm rounded-btn" href="{% url 'notes:home' %}"> Home </a>
+            <a class="btn btn-ghost btn-sm rounded-btn" href="{% url 'notes:resources' %}"> Resources </a>
+            {% if not request.user.is_authenticated %}
+                <a class="btn btn-ghost btn-sm rounded-btn" href="{% url 'notes:login' %}"> Login </a>
+                <a class="btn btn-ghost btn-sm rounded-btn" href="{% url 'notes:register' %}"> Register </a>
+            {% else %}
+            <div class="dropdown dropdown-end">
+                <div tabindex="0" class="btn btn-ghost btn-sm rounded-btn">@{{request.user.username}}</div>
+                <ul tabindex="0" class="p-2 shadow menu dropdown-content bg-base-100 rounded-box w-52">
+                    <li><a class="btn btn-ghost btn-sm rounded-btn" href="{% url 'notes:contributions' %}">My contributions</a></li>
+                    <li><a class="btn btn-ghost btn-sm rounded-btn" href="{% url 'notes:logout' %}">Logout</a></li>
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+        <!-- Theme button and dropdown -->
+        <div class="flex items-stretch">
+            <div class="dropdown dropdown-end">
+                <div tabindex="0" class="m-1 btn">Change Theme</div>
+                <ul tabindex="0" class="p-2 shadow menu dropdown-content bg-base-100 rounded-box w-52 max-h-80 flex flex-col flex-nowrap overflow-x-hidden overflow-y-scroll z-40" data-choose-theme="">
+                    <li><a data-set-theme="light">light</a></li>
+                    <li><a data-set-theme="dark">dark</a></li>
+                    <li><a data-set-theme="cupcake">cupcake</a></li>
+                    <li><a data-set-theme="bumblebee">bumblebee</a></li>
+                    <li><a data-set-theme="emerald">emerald</a></li>
+                    <li><a data-set-theme="corporate">corporate</a></li>
+                    <li><a data-set-theme="synthwave">synthwave</a></li>
+                    <li><a data-set-theme="retro">retro</a></li>
+                    <li><a data-set-theme="cyberpunk">cyberpunk</a></li>
+                    <li><a data-set-theme="valentine">valentine</a></li>
+                    <li><a data-set-theme="halloween">halloween</a></li>
+                    <li><a data-set-theme="garden">garden</a></li>
+                    <li><a data-set-theme="forest">forest</a></li>
+                    <li><a data-set-theme="aqua">aqua</a></li>
+                    <li><a data-set-theme="lofi">lofi</a></li>
+                    <li><a data-set-theme="pastel">pastel</a></li>
+                    <li><a data-set-theme="fantasy">fantasy</a></li>
+                    <li><a data-set-theme="wireframe">wireframe</a></li>
+                    <li><a data-set-theme="black">black</a></li>
+                    <li><a data-set-theme="luxury">luxury</a></li>
+                    <li><a data-set-theme="dracula">dracula</a></li>
+                    <li><a data-set-theme="cmyk">cmyk</a></li>
+                    <li><a data-set-theme="autumn">autumn</a></li>
+                    <li><a data-set-theme="business">business</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Drawer begins here -->
+    <div class="drawer-side z-50">
+        <label for="my-drawer-3" aria-label="close sidebar" class="drawer-overlay"></label> 
+        <ul class="menu p-4 w-60 min-h-full bg-base-100 text-base-content">
+            <!-- Sidebar content here -->
+            <div class="flex-none px-2 mx-2">
+                <span class="text-lg font-bold">{{website_name}}</span>
+            </div>
+            <div class="divider"></div>
+            <li><a href="{% url 'notes:home' %}"> Home </a></li>
+            <li><a href="{% url 'notes:resources' %}">Resources</a></li>
+            {% if not request.user.is_authenticated %}
+                <li><a href="{% url 'notes:login' %}"> Login </a></li>
+                <li><a href="{% url 'notes:register' %}"> Register </a><li>
+            {% else %}
+                <li><a href="{% url 'notes:contributions' %}">My contributions</a></li>
+                <li><a href="{% url 'notes:logout' %}">Logout</a></li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>

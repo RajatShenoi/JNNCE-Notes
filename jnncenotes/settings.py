@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -28,10 +29,14 @@ DEBUG = True
 ALLOWED_HOSTS = ["*"]
 
 # VARIABLES FOR AZURE STORAGE
-AZURE_STORAGE_ACCOUNT = "https://jnncenotes.blob.core.windows.net"
-AZURE_VAULT_ACCOUNT = "https://jnncenotes.vault.azure.net/"
-AZURE_STORAGE_KEY_NAME = "JNNCE-STORAGE-KEY"
-AZURE_APP_BLOB_NAME = "files"
+AZURE_STORAGE_ACCOUNT = os.environ.get("AZURE_STORAGE_ACCOUNT")
+AZURE_VAULT_ACCOUNT = os.environ.get("AZURE_VAULT_ACCOUNT")
+AZURE_STORAGE_KEY_NAME = os.environ.get("AZURE_STORAGE_KEY_NAME")
+AZURE_APP_BLOB_NAME = os.environ.get("AZURE_APP_BLOB_NAME")
+
+# Constants
+WEBSITE_NAME = os.environ.get("WEBSITE_NAME")
+CONTACT_EMAIL = os.environ.get("CONTACT_EMAIL")
 
 
 # Application definition
@@ -72,6 +77,8 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+
+                "notes.context_processors.constants",
             ],
         },
     },

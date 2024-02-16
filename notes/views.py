@@ -27,7 +27,7 @@ def resources(request):
         },
         "current": "Resources",
     }
-    branches = Branch.objects.all()
+    branches = Branch.objects.all().order_by('order')
     return render(request, "notes/resources.html", {
         "crumbs": crumbs,
         "branches": branches,
@@ -74,11 +74,16 @@ def displayModuleList(request, branch_code, course_code):
 
     course_modules = CourseModule.objects.filter(course=course)
 
+    count = {}
+    for module in course_modules:
+        count[str(module)] = File.objects.filter(course_module = module, approved = 1).count()
+
     return render(request, "notes/module_list.html", {
         "branch": branch,
         "course": course,
         "course_modules": course_modules,
         "crumbs": crumbs,
+        "count": count,
     })
 
 def displayFileList(request, branch_code, course_code, pk):
@@ -193,7 +198,7 @@ def userLogOut(request):
     logout(request)
     return redirect('notes:home')
 
-# @login_required
+@login_required
 def uploadFile(request, branch_code, course_code):
     try:
         branch = Branch.objects.get(code=branch_code)
@@ -312,6 +317,8 @@ def downloadFile(request, pk):
         messages.error(request, f"{e.error}: {e.message}. Contact admin.")
         return redirect('notes:contributions')
     if blob_content:
+        file.number_of_downloads += 1
+        file.save()
         response = HttpResponse(blob_content.readall(), content_type=file_type)
         response['Content-Disposition'] = f'inline; filename={file_name}'
         return response
@@ -323,7 +330,7 @@ def contributions(request):
         "path": {
             "Home": reverse("notes:home"),
         },
-        "current": "My Contributions",
+        "current": f"My Contributions - @{request.user.username}",
     }
     files = File.objects.filter(user=request.user).order_by('-date_created')
 

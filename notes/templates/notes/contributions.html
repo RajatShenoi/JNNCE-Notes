@@ -21,13 +21,13 @@
                     <td>{{file.date_created}}</td>
                     <td>
                         {% if file.approved == 0 %}
-                            Pending approval...
+                            <span class="text-primary">Pending approval...</span>
                         {% elif file.approved == 1 %}
-                            Approved!
+                            <span class="text-success">Approved!</span>
                         {% elif file.approved == 2 %}
-                            Duplicate
+                            <span class="text-warning">Duplicate</span>
                         {% else %}
-                            Rejected
+                            <span class="text-error">Rejected</span>
                         {% endif %}
                     </td>
                     <td>

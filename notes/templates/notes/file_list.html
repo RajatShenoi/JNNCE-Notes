@@ -1,19 +1,30 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-    <h1>Module List for {{course.code}}: {{course.name}}</h1>
-    <a href="{% url 'notes:upload-file' branch.code course.code %}">contribute</a>
-    <p>List of files:</p>
-    <ul>
-        {% for file in files %}
-            <li>{{file.file_name}} | <a href="{% url 'notes:download-file' file.pk %}" target="_blank">download</a> | {{file.user}} | {{file.date_created}}</li>
-        {% endfor %}
-    </ul>
-    <p>
-        We depend on students like you to contribute to the notes and question papers present on this website.
-        If you find anything that is not available here, please consider contributing to the website by uploading 
-        the same. Small contributions such as uploading the Internal Examination question paper or the Semester Exam
-        question paper as soon as the examination is over goes a long way in helping the community.
-        We will be very greatful for the same. 
-    </p>
+    <h1 class="text-2xl font-bold mt-2">List of resources for {{course.name}}</h1>
+    <a href="{% url 'notes:upload-file' branch.code course.code %}" class="btn btn-accent btn-sm mt-2">Contribute</a>
+    <div class="overflow-x-auto mt-2">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Download</th>
+                <th>Uploaded by</th>
+                <th>Uploaded on</th>
+                <th>Times download</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for file in files %}
+                <tr>
+                    <td>{{ file.file_name }}</td>
+                    <td><a href="{% url 'notes:download-file' file.pk %}" class="link" target="_blank">Download</a></td>
+                    <td>@{{ file.user }}</td>
+                    <td>{{ file.date_created }}</td>
+                    <td>{{ file.number_of_downloads }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock %}

@@ -1,13 +1,17 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-    <h1 id="start">Welcome to the Home Page</h1>
-    <p>If you belong to 1st or 2nd semester, select "First year - Common Branch".
-    Otherwise, select your branch from the below list.
+    <h1 class="text-3xl font-bold mt-2">Select the branch you'd like to view the resources for:</h1>
+    <p class="mt-3">
+        <span class="text-success">First and second semester</span> resources are available under "First Year - Common Branch".
+        Resources for third semester onwards are available under the respective branch.
     </p>
-    <ul>
+    <ul class="list-disc my-2 menu text-base">
         {% for branch in branches %}
-            <li><a href="{% url 'notes:display-course-list' branch.code %}" class="link">{{branch.name }} ({{ branch.code }})</a></li>
+            <li><a href="{% url 'notes:display-course-list' branch.code %}">{{branch.name }} ({{ branch.code }})</a></li>
         {% endfor %}
     </ul>
+    <!-- <p class="italic"><span class="underline">Please note:</span> Currently, we have received resources for First Year only. If you have
+        entered branch level, kindly consider contributing resources for the benefit of others. Thank you!
+    </p> -->
 {% endblock %}
