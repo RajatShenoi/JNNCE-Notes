@@ -1,13 +1,17 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-    <h1>Welcome to the Home Page</h1>
-    <p>If you belong to 1st or 2nd semester, select "First year - Common Branch".
-    Otherwise, select your branch from the below list.
-    </p>
-    <ul>
-        {% for branch in branches %}
-            <li><a href="{% url 'notes:display-course-list' branch.code %}" class="link">{{branch.name }} ({{ branch.code }})</a></li>
-        {% endfor %}
-    </ul>
+    <div class="hero" style="min-height: 70vh;">
+        <div class="hero-content text-center">
+            <div class="max-w-md">
+                <h1 class="text-5xl font-bold">Welcome!</h1>
+                <p class="py-6">
+                    Learn Easy is a learning <span class="text-accent">resource sharing platform</span> designed for students pursuing engineering 
+                    at any of the colleges affiliated to <span class="text-accent">Visvesvaraya Technological University</span>.
+                    Resources are shared by students and are available for <span class="text-accent">free</span>.
+                </p>
+                <a class="btn btn-primary" href="{% url 'notes:resources' %}">Find resources</a>
+            </div>
+        </div>
+    </div>
 {% endblock %}

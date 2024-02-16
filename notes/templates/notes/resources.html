@@ -1,0 +1,13 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <h1 id="start">Welcome to the Home Page</h1>
+    <p>If you belong to 1st or 2nd semester, select "First year - Common Branch".
+    Otherwise, select your branch from the below list.
+    </p>
+    <ul>
+        {% for branch in branches %}
+            <li><a href="{% url 'notes:display-course-list' branch.code %}" class="link">{{branch.name }} ({{ branch.code }})</a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}

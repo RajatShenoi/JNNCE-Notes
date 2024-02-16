@@ -16,9 +16,20 @@ from .models import Branch, Course, CourseModule, File
 
 # Create your views here.
 def home(request):
-    branches = Branch.objects.all()
-
     return render(request, "notes/home.html", {
+       
+    })
+
+def resources(request):
+    crumbs = {
+        "path": {
+            "Home": reverse("notes:home"),
+        },
+        "current": "Resources",
+    }
+    branches = Branch.objects.all()
+    return render(request, "notes/resources.html", {
+        "crumbs": crumbs,
         "branches": branches,
     })
 
@@ -26,6 +37,7 @@ def displayCourseList(request, branch_code):
     crumbs = {
         "path": {
             "Home": reverse("notes:home"),
+            "Resources": reverse("notes:resources"),
         },
         "current": f"{branch_code}",
     }
@@ -46,6 +58,7 @@ def displayModuleList(request, branch_code, course_code):
     crumbs = {
         "path": {
             "Home": reverse("notes:home"),
+            "Resources": reverse("notes:resources"),
             f"{branch_code}": reverse("notes:display-course-list", args=[branch_code]),
         },
         "current": f"{course_code}",
@@ -87,6 +100,7 @@ def displayFileList(request, branch_code, course_code, pk):
     crumbs = {
         "path": {
             "Home": reverse("notes:home"),
+            "Resources": reverse("notes:resources"),
             f"{branch_code}": reverse("notes:display-course-list", args=[branch_code]),
             f"{course_code}": reverse("notes:display-module-list", args=[branch_code, course_code])
         },
@@ -188,6 +202,7 @@ def uploadFile(request, course_code):
     crumbs = {
         "path": {
             "Home": reverse("notes:home"),
+            "Resources": reverse("notes:resources"),
             f"{course.branch.code}": reverse("notes:display-course-list", args=[course.branch.code]),
         },
         "current": "Contribute",

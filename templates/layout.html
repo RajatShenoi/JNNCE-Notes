@@ -10,15 +10,20 @@
 </head>
 <body class="mx-auto">
     <nav class="navbar mb-2 shadow-lg rounded-box">
+        <!-- Drawer button -->
         <input id="my-drawer-3" type="checkbox" class="drawer-toggle" /> 
         <div class="flex-none md:hidden">
             <label for="my-drawer-3" aria-label="open sidebar" class="btn btn-square btn-ghost">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-6 h-6 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
             </label>
         </div> 
+        <!-- Website Title -->
+
         <div class="flex-none px-2 mx-2">
             <span class="text-lg font-bold">Learn Easy</span>
         </div>
+
+        <!-- Navbar Links -->
         <div class="flex-1 px-2 mx-2 justify-end">
             <div class="items-stretch hidden md:flex">
                 <a class="btn btn-ghost btn-sm rounded-btn" href="{% url 'notes:home' %}"> Home </a>
@@ -34,12 +39,12 @@
                     </ul>
                 </div>
                 {% endif %}
-                <a class="btn btn-ghost btn-sm rounded-btn"> Contact </a>
             </div>
+            <!-- Theme button and dropdown -->
             <div class="flex items-stretch">
                 <div class="dropdown dropdown-end">
                     <div tabindex="0" class="m-1 btn">Change Theme</div>
-                    <ul tabindex="0" class="p-2 shadow menu dropdown-content bg-base-100 rounded-box w-52 max-h-80 flex flex-col flex-nowrap overflow-x-hidden overflow-y-scroll" data-choose-theme="">
+                    <ul tabindex="0" class="p-2 shadow menu dropdown-content bg-base-100 rounded-box w-52 max-h-80 flex flex-col flex-nowrap overflow-x-hidden overflow-y-scroll z-40" data-choose-theme="">
                         <li><a data-set-theme="light">light</a></li>
                         <li><a data-set-theme="dark">dark</a></li>
                         <li><a data-set-theme="cupcake">cupcake</a></li>
@@ -68,9 +73,11 @@
                 </div>
             </div>
         </div>
-        <div class="drawer-side">
+
+        <!-- Drawer begins here -->
+        <div class="drawer-side z-50">
             <label for="my-drawer-3" aria-label="close sidebar" class="drawer-overlay"></label> 
-            <ul class="menu p-4 w-80 min-h-full bg-base-100 text-base-content">
+            <ul class="menu p-4 w-60 min-h-full bg-base-100 text-base-content">
                 <!-- Sidebar content here -->
                 <div class="flex-none px-2 mx-2">
                     <span class="text-lg font-bold">Learn Easy</span>
@@ -88,7 +95,8 @@
         </div>
     </nav>
     
-    <main class="px-5">
+    <main class="px-5 pb-10">
+        <!-- Messages -->
         {% for message in messages %}
         <div class="p-2">
             <div role="alert" class="alert alert-{{message.tags}}">
@@ -108,6 +116,7 @@
             </div>
         </div>
         {% endfor %}
+        <!-- Breadcrumbs -->
         {% if crumbs %}
             <div class="text-sm breadcrumbs">
                 <ul>
@@ -124,13 +133,14 @@
                 </ul>
             </div>
         {% endif %}
+        <!-- Main Content -->
         {% block content %}
         {% endblock %}
     </main>
     
     <footer class="footer footer-center p-4 bg-base-300 text-base-content fixed bottom-0">
         <aside>
-            <p>Copyright © 2024 - All right reserved by Rajat Shenoi</p>
+            <p>Copyright © 2024 - All rights reserved by Rajat Shenoi</p>
         </aside>
     </footer>
 </body>
