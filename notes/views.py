@@ -72,7 +72,7 @@ def displayModuleList(request, branch_code, course_code):
     if branch not in course.branch.all():
         raise Http404
 
-    course_modules = CourseModule.objects.filter(course=course)
+    course_modules = CourseModule.objects.filter(course=course).order_by('number')
 
     count = {}
     for module in course_modules:

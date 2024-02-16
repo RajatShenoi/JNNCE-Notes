@@ -1,5 +1,7 @@
 {% extends 'layout.html' %}
 
+{% block title %}@{{request.user.username}}{% endblock %}
+
 {% block content %}
     <div class="overflow-x-auto">
         <table class="table">

@@ -1,5 +1,7 @@
 {% extends 'layout.html' %}
 
+{% block title %}Module list for {{course.name}}{% endblock %}
+
 {% block content %}
     <h1 class="text-3xl font-bold mt-2">Select the module:</h1>
     <a href="{% url 'notes:upload-file' branch.code course.code %}" class="btn btn-accent btn-sm mt-2">Contribute</a>
