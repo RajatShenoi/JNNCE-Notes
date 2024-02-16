@@ -16,11 +16,11 @@ class Branch(models.Model):
 class Course(models.Model):
     name = models.CharField(max_length=100)
     code = models.CharField(max_length=20)
-    branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
+    branch = models.ManyToManyField(Branch)
     credits = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(4)])
 
     def __str__(self):
-        return f"{self.branch.code}-{self.code}: {self.name}"
+        return f"{self.code}: {self.name}"
     
 class CourseModule(models.Model):
     number = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(5)])
@@ -35,7 +35,7 @@ class CourseModule(models.Model):
             s = f"{self.course.code}"
         else:
             s = f"{self.course.code}-{self.number}"
-        return f"{self.course.branch.code}-{s}: {self.name}"
+        return f"{s}: {self.name}"
     
 class File(models.Model):
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=True)

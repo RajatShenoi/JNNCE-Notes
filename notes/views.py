@@ -69,7 +69,7 @@ def displayModuleList(request, branch_code, course_code):
     except (Branch.DoesNotExist, Course.DoesNotExist):
         raise Http404
 
-    if course.branch != branch:
+    if branch not in course.branch.all():
         raise Http404
 
     course_modules = CourseModule.objects.filter(course=course)
@@ -89,7 +89,7 @@ def displayFileList(request, branch_code, course_code, pk):
     except (Branch.DoesNotExist, Course.DoesNotExist, CourseModule.DoesNotExist):
         raise Http404
 
-    if course.branch != branch:
+    if branch not in course.branch.all():
         raise Http404
 
     if course_module.course != course:
@@ -108,6 +108,7 @@ def displayFileList(request, branch_code, course_code, pk):
     }
 
     return render(request, "notes/file_list.html", {
+        "branch": branch,
         "course": course,
         "course_module": course_module,
         "files": files,
@@ -193,17 +194,22 @@ def userLogOut(request):
     return redirect('notes:home')
 
 # @login_required
-def uploadFile(request, course_code):
+def uploadFile(request, branch_code, course_code):
     try:
+        branch = Branch.objects.get(code=branch_code)
         course = Course.objects.get(code=course_code)
     except Course.DoesNotExist:
+        raise Http404
+    
+    if branch not in course.branch.all():
         raise Http404
     
     crumbs = {
         "path": {
             "Home": reverse("notes:home"),
             "Resources": reverse("notes:resources"),
-            f"{course.branch.code}": reverse("notes:display-course-list", args=[course.branch.code]),
+            f"{branch.code}": reverse("notes:display-course-list", args=[branch.code]),
+            f"{course.code}": reverse("notes:display-module-list", args=[branch.code, course.code]),
         },
         "current": "Contribute",
     }

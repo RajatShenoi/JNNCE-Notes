@@ -2,7 +2,7 @@
 
 {% block content %}
     <h1>Module List for {{course.code}}: {{course.name}}</h1>
-    <a href="{% url 'notes:upload-file' course.code %}">Contribute</a>
+    <a href="{% url 'notes:upload-file' branch.code course.code %}">Contribute</a>
     <p>Select the module:</p>
     <ul>
         {% for module in course_modules %}
