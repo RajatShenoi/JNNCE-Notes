@@ -48,6 +48,17 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_SSL_REDIRECT = False
 SECURE_HSTS_PRELOAD = True
 
+# Email Configuration
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp-relay.brevo.com"
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.environ.get('EMAIL_ID') 
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PW')
+
+DEFAULT_FROM_EMAIL = 'Learn Easy | Verification<no_reply@domain.com>'
+EXPIRE_AFTER = "1d"
+REQUEST_NEW_EMAIL_TEMPLATE = 'notes/verification/request_new_email.html'
+SUBJECT = "Verify your email address"
 
 # Application definition
 
@@ -60,6 +71,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
     "notes.apps.NotesConfig",
+    "verify_email.apps.VerifyEmailConfig",
 ]
 
 MIDDLEWARE = [
