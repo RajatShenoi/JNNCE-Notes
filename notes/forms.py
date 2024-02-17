@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 
-from notes.models import Course, CourseModule
+from notes.models import Branch, Course, CourseModule
 
 class LoginForm(forms.Form):
     username = forms.CharField(
@@ -78,3 +78,65 @@ class UploadFileForm(forms.Form):
             )
         )
         
+class ContributeForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        super(ContributeForm, self).__init__(*args, **kwargs)
+        self.fields['branch'] = forms.ModelChoiceField(
+            queryset=Branch.objects.all(),
+            widget=forms.Select(attrs={
+                    'class': 'select select-bordered',
+                    'style': 'max-width: 90vw;',
+                    'onchange': 'getCourseList(this.value);'
+                }
+            )
+        )
+        self.fields['course'] = forms.ModelChoiceField(
+            queryset=Course.objects.none(),
+            widget=forms.Select(attrs={
+                    'class': 'select select-bordered',
+                    'style': 'max-width: 90vw;',
+                    'onchange': 'getModuleList(this.value);',
+                }
+            )
+        )
+        self.fields['module'] = forms.ModelChoiceField(
+            queryset=CourseModule.objects.none(),
+            widget=forms.Select(attrs={
+                    'class': 'select select-bordered',
+                    'style': 'max-width: 90vw;'
+                }
+            )
+        )
+        self.fields['name'] = forms.CharField(
+            max_length=100,
+            widget=forms.TextInput(attrs={
+                    'placeholder': 'File Name',
+                    'autocomplete': 'off',
+                    'style': 'max-width: 90vw;',
+                    'class': 'grow'
+                }
+            )
+        )
+        self.fields['file'] = forms.FileField(
+            allow_empty_file=False, 
+            required=True,
+            widget=forms.FileInput(attrs={
+                    'class': 'file-input file-input-bordered',
+                    'style': 'max-width: 90vw;'
+                }
+            )
+        )
+        if 'branch' in self.data:
+            try:
+                branch_id = int(self.data.get('branch'))
+                branch = Branch.objects.get(id=branch_id)
+                self.fields['course'].queryset = Course.objects.filter(branch=branch).order_by('code')
+            except (ValueError, TypeError, Branch.DoesNotExist):
+                pass
+        if 'course' in self.data:
+            try:
+                course_id = int(self.data.get('course'))
+                course = Course.objects.get(id=course_id)
+                self.fields['module'].queryset = CourseModule.objects.filter(course=course).order_by('number')
+            except (ValueError, TypeError, Course.DoesNotExist):
+                pass

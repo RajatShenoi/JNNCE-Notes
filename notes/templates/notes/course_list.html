@@ -4,6 +4,7 @@
 
 {% block content %}
     <h1 class="text-3xl font-bold mt-2">Select the course:</h1>
+    <a href="{% url 'notes:contribute' %}" class="btn btn-accent btn-sm mt-2">Contribute</a>
     <p class="mt-3 italic">
         If the course you're looking for is not available in the list below, kindly contact us at <a class="link" href="mailto:{{contact_email}}">{{contact_email}}</a> to contribute resources.
     </p>

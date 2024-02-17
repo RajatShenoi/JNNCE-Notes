@@ -11,6 +11,7 @@ module.exports = {
   ],
   daisyui: {
     themes: [
+      "retro",
       "light",
       "dark",
       "cupcake",
@@ -18,7 +19,6 @@ module.exports = {
       "emerald",
       "corporate",
       "synthwave",
-      "retro",
       "cyberpunk",
       "valentine",
       "halloween",
@@ -44,6 +44,7 @@ module.exports = {
       "nord",
       "sunset",
     ],
+    darkTheme: "dark",
   },
 }
 

@@ -1,5 +1,6 @@
 import mimetypes
-from django.http import Http404, HttpResponse
+
+from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
 from django.contrib import messages
 from django.contrib.auth import logout, login, authenticate
@@ -8,10 +9,12 @@ from django.contrib.auth.models import User
 
 from azure.core.exceptions import ClientAuthenticationError, ResourceNotFoundError
 from django.urls import reverse
+
 from notes.azure_file_controller import delete_blob, download_blob, upload_file_to_blob
 from notes.exceptions import NotAllowedExtenstionError, UploadBlobError
+from notes.serializer import CourseModuleSerializer, CourseSerializer
 
-from .forms import LoginForm, RegisterForm, UploadFileForm
+from .forms import ContributeForm, LoginForm, RegisterForm, UploadFileForm
 from .models import Branch, Course, CourseModule, File
 
 
@@ -200,6 +203,70 @@ def userLogOut(request):
     return redirect('notes:home')
 
 @login_required
+def contribute(request):
+    if request.method == "POST":
+        form = ContributeForm(request.POST, request.FILES)
+        if form.is_valid():
+            display_name = form.cleaned_data['name']
+            file = form.cleaned_data['file']
+            if file.size > 5242880:
+                messages.error(request, "You cannot upload file more than 5Mb")
+                return render(request, 'notes/contribute.html', {
+                    "form": form,
+                })
+            course_module = form.cleaned_data['module']
+            
+            try:
+                file_object = upload_file_to_blob(
+                    file,
+                    display_name,
+                    request.user,
+                    course_module,
+                )
+            except ClientAuthenticationError as e:
+                messages.error(request, f"{e.error}: {e.message}. Contact admin.")
+                return render(request, 'notes/contribute.html', {
+                    "form": form,
+                })
+            except ResourceNotFoundError as e:
+                messages.error(request, f"{e.error}: {e.message}. Contact admin.")
+                return render(request, 'notes/contribute.html', {
+                    "form": form,
+                })
+            except UploadBlobError:
+                messages.error(request, "File upload failed. Contact admin.")
+                return render(request, 'notes/contribute.html', {
+                    "form": form,
+                })
+            except NotAllowedExtenstionError:
+                messages.error(request, "File type not allowed. Only .pdf files are allowed.")
+                return render(request, 'notes/contribute.html', {
+                    "form": form,
+                })
+            else:
+                if file_object is None:
+                    messages.error(request, "File upload failed")
+                    return render(request, 'notes/contribute.html', {
+                        "form": form,
+                    })
+            messages.success(request, "Thank you for contributing! A moderator will need to approve the file before it is made public.")
+            return redirect('notes:contributions')
+        else:
+            print(form.errors)
+
+    crumbs = {
+        "path": {
+            "Home": reverse("notes:home"),
+        },
+        "current": "Contribute",
+    }
+    form = ContributeForm()
+    return render(request, 'notes/contribute.html', {
+        "crumbs": crumbs,
+        "form": form,
+    })
+
+@login_required
 def uploadFile(request, branch_code, course_code):
     try:
         branch = Branch.objects.get(code=branch_code)
@@ -277,7 +344,7 @@ def uploadFile(request, branch_code, course_code):
                         "course": course,
                         "crumbs": crumbs,
                     })
-            messages.success(request, "File uploaded successfully. A moderator will need to approve the file before it is made public.")
+            messages.success(request, "Thank you for contributing! A moderator will need to approve the file before it is made public.")
             return redirect('notes:contributions')
         else:
             messages.error(request, "Invalid form")
@@ -351,10 +418,9 @@ def topContributors(request):
         "current": "Top Contributors",
     }
     
+    contrib = {}
     for user in User.objects.all():
-        print(user)
         count = File.objects.filter(user=user, approved=1).count()
-        print(count)
         if count > 0:
             contrib[user.username] = count
 
@@ -391,3 +457,23 @@ def deleteFile(request, pk):
         return redirect('notes:contributions')
     
     return redirect('notes:contributions')
+
+def apiGetCourses(request, branch_id):
+    try:
+        branch = Branch.objects.get(pk=branch_id)
+    except Branch.DoesNotExist:
+        raise Http404
+    
+    courses = Course.objects.filter(branch=branch)
+    serializer = CourseSerializer(courses, many=True)
+    return JsonResponse(serializer.data, safe=False)
+
+def apiGetModules(request, course_id):
+    try:
+        course = Course.objects.get(pk=course_id)
+    except Course.DoesNotExist:
+        raise Http404
+    
+    course_modules = CourseModule.objects.filter(course=course)
+    serializer = CourseModuleSerializer(course_modules, many=True)
+    return JsonResponse(serializer.data, safe=False)

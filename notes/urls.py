@@ -12,6 +12,7 @@ urlpatterns = [
 
     path('top-contributors/', views.topContributors, name='top-contributors'),
     path('my-contributions/', views.contributions, name='contributions'),
+    path('contribute/', views.contribute, name='contribute'),
 
     # azure blob storage
     path('resources/contribute/<str:branch_code>/<str:course_code>/', views.uploadFile, name='upload-file'),
@@ -22,4 +23,8 @@ urlpatterns = [
     path('register/', views.userRegister, name='register'),
     path('login/', views.userLogin, name='login'),
     path('logout/', views.userLogOut, name='logout'),
+
+    # api
+    path('api/getCourses/<int:branch_id>/', views.apiGetCourses, name='api-get-courses'),
+    path('api/getModules/<int:course_id>/', views.apiGetModules, name='api-get-modules'),
 ]

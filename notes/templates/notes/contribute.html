@@ -1,0 +1,83 @@
+{% extends 'layout.html' %}
+
+{% block title %}Contribute{% endblock %}
+
+{% block content %}
+<div class="flex justify-center p-2">
+    <form method="post" id="contributeForm" data-course-list="{% url 'notes:api-get-courses' 0 %}" data-module-list="{% url 'notes:api-get-modules' 0 %}" enctype="multipart/form-data" onsubmit="disableSubmit();">
+        {% csrf_token %}
+        <div class="label">
+            <span class="label-text-alt">Select the branch you want to upload to</span>
+        </div>
+        <label>
+            {{ form.branch }}
+        </label>
+        <div class="label">
+            <span class="label-text-alt">Select the course you want to upload to</span>
+        </div>
+        <label>
+            {{ form.course }}
+        </label>
+        <div class="label">
+            <span class="label-text-alt">Select the module you want to upload to</span>
+        </div>
+        <label>
+            {{ form.module }}
+        </label>
+        <div class="label">
+            <span class="label-text-alt">Give a name to the file. This is the name that will be shown to other users while downloading after it is approved.</span>
+        </div>
+        <label class="input input-bordered flex items-center">
+            {{ form.name }}
+        </label>
+        <div class="label">
+            <span class="label-text-alt">Select one file. Please note, only <span class="text-success">.pdf</span> files are allowed, and the file size must be <span class="text-success">less than 5MB</span></span>
+        </div>
+        {{ form.file }}
+        <input class="btn btn-accent mt-5 md:mt-0" type="submit" value="Upload">
+    </form>
+</div>
+
+<script>
+    function getCourseList(value) {
+        var branch = value;
+        var url = document.getElementById('contributeForm').getAttribute('data-course-list').replace('0', branch);
+        var courseSelect = document.getElementById('id_course');
+        courseSelect.innerHTML = '';
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(course => {
+                    var option = document.createElement('option');
+                    option.value = course.pk;
+                    option.text = course.code + ": " + course.name;
+                    courseSelect.add(option);
+                });
+                getModuleList(courseSelect.value);
+            })
+            .catch(error => {
+                getModuleList(courseSelect.value);
+            });
+    }
+    function getModuleList(value) {
+        var course = value;
+        var url = document.getElementById('contributeForm').getAttribute('data-module-list').replace('0', course);
+        var moduleSelect = document.getElementById('id_module');
+        moduleSelect.innerHTML = '';
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(module => {
+                    var option = document.createElement('option');
+                    option.value = module.pk;
+                    option.text = module.name;
+                    moduleSelect.add(option);
+                });
+            });
+    }
+    function disableSubmit() {
+        document.querySelector('input[type="submit"]').disabled = true;
+        document.querySelector('input[type="submit"]').value = "Uploading...";
+    }
+</script>
+{% endblock %}

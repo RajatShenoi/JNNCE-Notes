@@ -26,6 +26,7 @@
                 <div tabindex="0" class="btn btn-ghost btn-sm rounded-btn">My Account</div>
                 <ul tabindex="0" class="p-2 shadow menu dropdown-content bg-base-100 rounded-box w-52">
                     <li><a class="btn btn-ghost btn-sm rounded-btn" href="{% url 'notes:contributions' %}">My contributions</a></li>
+                    <li><a class="btn btn-ghost btn-sm rounded-btn" href="{% url 'notes:contribute' %}">Contribute</a></li>
                     <li><a class="btn btn-ghost btn-sm rounded-btn" href="{% url 'notes:logout' %}">Logout</a></li>
                 </ul>
             </div>
@@ -82,6 +83,7 @@
                 <li><a href="{% url 'notes:register' %}"> Register </a><li>
             {% else %}
                 <li><a href="{% url 'notes:contributions' %}">My contributions</a></li>
+                <li><a href="{% url 'notes:contribute' %}">Contribute</a></li>
                 <li><a href="{% url 'notes:logout' %}">Logout</a></li>
             {% endif %}
         </ul>

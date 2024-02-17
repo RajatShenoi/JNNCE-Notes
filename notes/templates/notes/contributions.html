@@ -3,6 +3,7 @@
 {% block title %}@{{request.user.username}}{% endblock %}
 
 {% block content %}
+    <a href="{% url 'notes:contribute' %}" class="btn btn-accent btn-sm mt-2">Contribute</a>
     <div class="overflow-x-auto">
         <table class="table">
           <!-- head -->
