@@ -1,0 +1,25 @@
+{% extends 'layout.html' %}
+
+{% block title %}Top contributors{% endblock %}
+
+{% block content %}
+    <div class="overflow-x-auto">
+        <table class="table">
+          <!-- head -->
+            <thead>
+            <tr>
+                <th>Username</th>
+                <th>Number of contributions</th>
+            </tr>
+            </thead>
+            <tbody>
+                {% for username, no_of_contrib in contrib.items %}
+                    <tr>
+                        <td>@{{username}}</td>
+                        <td>{{no_of_contrib}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

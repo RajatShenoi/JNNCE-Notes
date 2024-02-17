@@ -10,6 +10,7 @@ urlpatterns = [
     path('resources/b/<str:branch_code>/c/<str:course_code>/', views.displayModuleList, name='display-module-list'),
     path('resources/b/<str:branch_code>/c/<str:course_code>/m/<str:pk>/', views.displayFileList, name='display-file-list'),
 
+    path('top-contributors/', views.topContributors, name='top-contributors'),
     path('my-contributions/', views.contributions, name='contributions'),
 
     # azure blob storage

@@ -17,12 +17,13 @@
         <div class="items-stretch hidden md:flex">
             <a class="btn btn-ghost btn-sm rounded-btn" href="{% url 'notes:home' %}"> Home </a>
             <a class="btn btn-ghost btn-sm rounded-btn" href="{% url 'notes:resources' %}"> Resources </a>
+            <a class="btn btn-ghost btn-sm rounded-btn" href="{% url 'notes:top-contributors' %}"> Top Contributors </a>
             {% if not request.user.is_authenticated %}
                 <a class="btn btn-ghost btn-sm rounded-btn" href="{% url 'notes:login' %}"> Login </a>
                 <a class="btn btn-ghost btn-sm rounded-btn" href="{% url 'notes:register' %}"> Register </a>
             {% else %}
             <div class="dropdown dropdown-end">
-                <div tabindex="0" class="btn btn-ghost btn-sm rounded-btn">@{{request.user.username}}</div>
+                <div tabindex="0" class="btn btn-ghost btn-sm rounded-btn">My Account</div>
                 <ul tabindex="0" class="p-2 shadow menu dropdown-content bg-base-100 rounded-box w-52">
                     <li><a class="btn btn-ghost btn-sm rounded-btn" href="{% url 'notes:contributions' %}">My contributions</a></li>
                     <li><a class="btn btn-ghost btn-sm rounded-btn" href="{% url 'notes:logout' %}">Logout</a></li>
@@ -75,6 +76,7 @@
             <div class="divider"></div>
             <li><a href="{% url 'notes:home' %}"> Home </a></li>
             <li><a href="{% url 'notes:resources' %}">Resources</a></li>
+            <li><a href="{% url 'notes:top-contributors' %}">Top Contributors</a></li>
             {% if not request.user.is_authenticated %}
                 <li><a href="{% url 'notes:login' %}"> Login </a></li>
                 <li><a href="{% url 'notes:register' %}"> Register </a><li>

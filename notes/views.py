@@ -4,6 +4,7 @@ from django.shortcuts import redirect, render
 from django.contrib import messages
 from django.contrib.auth import logout, login, authenticate
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 
 from azure.core.exceptions import ClientAuthenticationError, ResourceNotFoundError
 from django.urls import reverse
@@ -320,7 +321,7 @@ def downloadFile(request, pk):
         file.number_of_downloads += 1
         file.save()
         response = HttpResponse(blob_content.readall(), content_type=file_type)
-        response['Content-Disposition'] = f'inline; filename={file_name}'
+        response['Content-Disposition'] = f'inline; filename={file_name.replace(",", "")}'
         return response
     return Http404
 
@@ -340,6 +341,28 @@ def contributions(request):
     return render(request, "notes/contributions.html", {
         "files": files,
         "crumbs": crumbs,
+    })
+
+def topContributors(request):
+    crumbs = {
+        "path": {
+            "Home": reverse("notes:home"),
+        },
+        "current": "Top Contributors",
+    }
+    
+    for user in User.objects.all():
+        print(user)
+        count = File.objects.filter(user=user, approved=1).count()
+        print(count)
+        if count > 0:
+            contrib[user.username] = count
+
+    contrib = dict(sorted(contrib.items(), key=lambda item: item[1], reverse=True))
+
+    return render(request, "notes/top_contributors.html", {
+        "crumbs": crumbs,
+        "contrib": contrib,
     })
 
 @login_required
