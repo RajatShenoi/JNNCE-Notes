@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="flex justify-center p-2">
-    <form method="post" enctype="multipart/form-data">
+    <form method="post" enctype="multipart/form-data" onsubmit="disableSubmit();">
         {% csrf_token %}
         <div class="label">
             <span class="label-text-alt">Select the module you want to upload to</span>
@@ -25,4 +25,10 @@
         <input class="btn btn-accent mt-5 md:mt-0" type="submit" value="Upload">
     </form>
 </div>
+<script>
+    function disableSubmit() {
+        document.querySelector('input[type="submit"]').disabled = true;
+        document.querySelector('input[type="submit"]').value = "Uploading...";
+    }
+</script>
 {% endblock %}

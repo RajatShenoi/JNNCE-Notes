@@ -22,4 +22,5 @@ urlpatterns = [
     path("admin/", admin.site.urls),
 
     path("", include("notes.urls")),
+    path('verification/', include('verify_email.urls')),
 ]

@@ -14,6 +14,8 @@ from notes.azure_file_controller import delete_blob, download_blob, upload_file_
 from notes.exceptions import NotAllowedExtenstionError, UploadBlobError
 from notes.serializer import CourseModuleSerializer, CourseSerializer
 
+from verify_email.email_handler import send_verification_email
+
 from .forms import ContributeForm, LoginForm, RegisterForm, UploadFileForm
 from .models import Branch, Course, CourseModule, File
 
@@ -134,10 +136,10 @@ def userRegister(request):
     if request.method == "POST":
         form = RegisterForm(request.POST)
         if form.is_valid():
-            user = form.save(commit=False)
+            user = send_verification_email(request, form)
             user.username = user.username.lower()
             user.save()
-            login(request, user)
+            messages.success(request, "Account created successfully. Please check your email for verification link. You can login after email verification.")
             return redirect('notes:home')
         else:
             for error in form.errors:

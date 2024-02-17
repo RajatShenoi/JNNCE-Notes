@@ -10,6 +10,7 @@ class LoginForm(forms.Form):
         widget=forms.TextInput(attrs={
                 'placeholder': 'Username',
                 'autocomplete': 'off',
+                'class': 'grow',
             }
         )
     )
@@ -34,10 +35,12 @@ class RegisterForm(UserCreationForm):
             'username': forms.TextInput(attrs={
                 'placeholder': 'Username',
                 'autocomplete': 'off',
+                'class': 'grow',
             }),
             'email': forms.EmailInput(attrs={
                 'placeholder': 'Email',
                 'autocomplete': 'on',
+                'class': 'grow',
             }),
             'password1': forms.PasswordInput(attrs={
                 'placeholder': 'Password',
@@ -54,7 +57,7 @@ class UploadFileForm(forms.Form):
             queryset=CourseModule.objects.filter(course=course).order_by('number'),
             widget=forms.Select(attrs={
                     'class': 'select select-bordered',
-                    'style': 'max-width: 90vw;'
+                    'style': 'max-width: 90vw;',
                 }
             )
         )
@@ -64,7 +67,7 @@ class UploadFileForm(forms.Form):
                     'placeholder': 'File Name',
                     'autocomplete': 'off',
                     'style': 'max-width: 90vw;',
-                    'class': 'grow'
+                    'class': 'grow',
                 }
             )
         )
@@ -73,7 +76,7 @@ class UploadFileForm(forms.Form):
             required=True,
             widget=forms.FileInput(attrs={
                     'class': 'file-input file-input-bordered',
-                    'style': 'max-width: 90vw;'
+                    'style': 'max-width: 90vw;',
                 }
             )
         )
@@ -113,7 +116,7 @@ class ContributeForm(forms.Form):
                     'placeholder': 'File Name',
                     'autocomplete': 'off',
                     'style': 'max-width: 90vw;',
-                    'class': 'grow'
+                    'class': 'grow',
                 }
             )
         )
@@ -122,7 +125,7 @@ class ContributeForm(forms.Form):
             required=True,
             widget=forms.FileInput(attrs={
                     'class': 'file-input file-input-bordered',
-                    'style': 'max-width: 90vw;'
+                    'style': 'max-width: 90vw;',
                 }
             )
         )

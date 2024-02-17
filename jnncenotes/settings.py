@@ -38,6 +38,17 @@ AZURE_APP_BLOB_NAME = os.environ.get("AZURE_APP_BLOB_NAME")
 WEBSITE_NAME = os.environ.get("WEBSITE_NAME")
 CONTACT_EMAIL = os.environ.get("CONTACT_EMAIL")
 
+# Email Configuration
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp-relay.brevo.com"
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.environ.get('EMAIL_ID') 
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PW')
+
+DEFAULT_FROM_EMAIL = 'Learn Easy | Verification<no_reply@domain.com>'
+EXPIRE_AFTER = "1d"
+REQUEST_NEW_EMAIL_TEMPLATE = 'notes/verification/request_new_email.html'
+SUBJECT = "Verify your email address"
 
 # Application definition
 
@@ -50,6 +61,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
     "notes.apps.NotesConfig",
+    "verify_email.apps.VerifyEmailConfig",
 ]
 
 MIDDLEWARE = [

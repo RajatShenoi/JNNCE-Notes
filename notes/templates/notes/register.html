@@ -3,7 +3,7 @@
 {% block title %}Register{% endblock %}
 
 {% block content %}
-    <div class="flex justify-center p-2">
+    <div class="flex justify-center p-2" onsubmit="disableSubmit();">
         <form method="post">
             {% csrf_token %}
             <div class="label">
@@ -35,7 +35,14 @@
                 {{ form.password2 }}
             </label>
             <input class="btn btn-accent btn-block mt-5" type="submit" value="Register">
-            <a class="link label-text" href="{% url 'notes:login' %}">Already have an account? Login</a>
+            <a class="link label-text" href="{% url 'notes:login' %}">Already have an account? Login</a><br>
+            <a class="link label-text" href="{% url 'request-new-link-from-email' %}">Lost your verification email? Resend now.</a>
         </form>
     </div>
+    <script>
+        function disableSubmit() {
+            document.querySelector('input[type="submit"]').disabled = true;
+            document.querySelector('input[type="submit"]').value = "Registering...";
+        }
+    </script>
 {% endblock %}
