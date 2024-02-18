@@ -55,8 +55,9 @@ EMAIL_PORT = 587
 EMAIL_HOST_USER = os.environ.get('EMAIL_ID') 
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PW')
 
-DEFAULT_FROM_EMAIL = 'Learn Easy | Verification<no_reply@domain.com>'
+DEFAULT_FROM_EMAIL = 'Learn Easy<noreply@learneasy.study>'
 EXPIRE_AFTER = "1d"
+HTML_MESSAGE_TEMPLATE = 'notes/verification/html_message_template.html'
 REQUEST_NEW_EMAIL_TEMPLATE = 'notes/verification/request_new_email.html'
 SUBJECT = "Verify your email address"
 

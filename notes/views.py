@@ -127,6 +127,9 @@ def displayFileList(request, branch_code, course_code, pk):
     })
 
 def userRegister(request):
+    if request.user.is_authenticated:
+        messages.info(request, "You are already logged in")
+        return redirect('notes:home')
     crumbs = {
         "path": {
             "Home": reverse("notes:home"),
@@ -136,11 +139,26 @@ def userRegister(request):
     if request.method == "POST":
         form = RegisterForm(request.POST)
         if form.is_valid():
-            user = send_verification_email(request, form)
-            user.username = user.username.lower()
-            user.save()
-            messages.success(request, "Account created successfully. Please check your email for verification link. You can login after email verification.")
-            return redirect('notes:home')
+            try:
+                try:
+                    user = User.objects.get(email=form.cleaned_data['email'])
+                    messages.error(request, "User with this email already exists")
+                    return render(request, 'notes/register.html', {
+                        "form": form,
+                        "crumbs": crumbs,
+                    })
+                except User.DoesNotExist:
+                    user = send_verification_email(request, form)
+                    user.username = user.username.lower()
+                    user.save()
+                    messages.success(request, f"Account created successfully for {user.email}. Kindly check your email for a verification link.")
+                    return redirect('notes:home')
+            except Exception as e:
+                messages.error(request, f"There was an error. Contact us with:  Error: {e}")
+                return render(request, 'notes/register.html', {
+                    "form": form,
+                    "crumbs": crumbs,
+                })
         else:
             for error in form.errors:
                 messages.error(request, f"{error}: {form.errors[error][0]}")
@@ -149,9 +167,6 @@ def userRegister(request):
                 "crumbs": crumbs,
             })
         
-    if request.user.is_authenticated:
-        messages.info(request, "You are already logged in")
-        return redirect('notes:home')
     form = RegisterForm()
     return render(request, 'notes/register.html', {
         "form": form,
@@ -159,6 +174,10 @@ def userRegister(request):
     })
     
 def userLogin(request):
+    if request.user.is_authenticated:
+        messages.info(request, "You are already logged in")
+        return redirect('notes:home')
+    
     crumbs = {
         "path": {
             "Home": reverse("notes:home"),
@@ -179,6 +198,15 @@ def userLogin(request):
                     return redirect(next)
                 return redirect('notes:home')
             else:
+                temp_user = User.objects.filter(username=username)
+                if temp_user.exists():
+                    temp_user = temp_user.first()
+                    if temp_user.is_active == False:
+                        messages.warning(request, "Account not verified. A verification link was sent earlier. Kindly check your email.")
+                        return render(request, 'notes/login.html', {
+                            "form": form,
+                            "crumbs": crumbs,
+                        })
                 messages.error(request, "Invalid username or password")
                 return render(request, 'notes/login.html', {
                     "form": form,
@@ -191,9 +219,6 @@ def userLogin(request):
                 "form": form,
             })
     
-    if request.user.is_authenticated:
-        messages.info(request, "You are already logged in")
-        return redirect('notes:home')
     form = LoginForm()
     return render(request, 'notes/login.html', {
         "form": form,

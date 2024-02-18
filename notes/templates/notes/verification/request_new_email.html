@@ -3,6 +3,13 @@
 {% block title %}Resend verification email{% endblock %}
 
 {% block content %}
+    <div class="text-sm breadcrumbs">
+        <ul>
+            <li><a class="link" href="{% url 'notes:home' %}">Home</a></li>
+            <li><a class="link" href="{% url 'notes:register' %}">Register</a></li>
+            <li>Resend verification email</li>
+        </ul>
+    </div>
     <div class="flex justify-center p-2">
         <form method="post">
             {% csrf_token %}
