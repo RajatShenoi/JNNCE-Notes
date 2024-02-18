@@ -6,9 +6,12 @@ from django.contrib import messages
 from django.contrib.auth import logout, login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.contrib.messages.views import SuccessMessageMixin
 
 from azure.core.exceptions import ClientAuthenticationError, ResourceNotFoundError
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 
 from notes.azure_file_controller import delete_blob, download_blob, upload_file_to_blob
 from notes.exceptions import NotAllowedExtenstionError, UploadBlobError
@@ -188,7 +191,7 @@ def userLogin(request):
     if request.method == "POST":
         form = LoginForm(request.POST)
         if form.is_valid():
-            username = form.cleaned_data['username']
+            username = form.cleaned_data['username'].lower()
             password = form.cleaned_data['password']
             user = authenticate(request, username=username, password=password)
             if user is not None:
@@ -504,3 +507,36 @@ def apiGetModules(request, course_id):
     course_modules = CourseModule.objects.filter(course=course)
     serializer = CourseModuleSerializer(course_modules, many=True)
     return JsonResponse(serializer.data, safe=False)
+
+class ResetPasswordView(UserPassesTestMixin, SuccessMessageMixin, PasswordResetView):
+    template_name = 'notes/password_reset/password_reset.html'
+    email_template_name = 'notes/password_reset/password_reset_email.html'
+    html_email_template_name = 'notes/password_reset/password_reset_email.html'
+    subject_template_name = 'notes/password_reset/password_reset_subject.html'
+    
+    success_message = "We've emailed you instructions for setting your password, " \
+                      "if an account exists with the email you entered. You should receive them shortly." \
+                      " If you don't receive an email, " \
+                      "please make sure you've entered the address you registered with, and check your spam folder."
+
+    success_url = reverse_lazy('notes:login')
+
+    def handle_no_permission(self):
+        messages.info(self.request, "You are already logged in")
+        return redirect('notes:home')
+
+    def test_func(self):
+        return self.request.user.is_anonymous
+    
+class ResetPasswordConfirmView(UserPassesTestMixin, SuccessMessageMixin, PasswordResetConfirmView):
+    template_name = 'notes/password_reset/password_reset_confirm.html'
+    success_message = "Your password has been reset. You may login with the new password."
+
+    success_url = reverse_lazy('notes:login')
+
+    def handle_no_permission(self):
+        messages.info(self.request, "You are already logged in")
+        return redirect('notes:home')
+
+    def test_func(self):
+        return self.request.user.is_anonymous

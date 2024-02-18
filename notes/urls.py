@@ -1,4 +1,5 @@
 from django.urls import path
+
 from . import views
 
 app_name = 'notes'
@@ -20,9 +21,11 @@ urlpatterns = [
     path('resources/delete/<str:pk>/', views.deleteFile, name='delete-file'),
 
     # authentication
-    path('register/', views.userRegister, name='register'),
-    path('login/', views.userLogin, name='login'),
-    path('logout/', views.userLogOut, name='logout'),
+    path('auth/register/', views.userRegister, name='register'),
+    path('auth/login/', views.userLogin, name='login'),
+    path('auth/logout/', views.userLogOut, name='logout'),
+    path('auth/password-reset/', views.ResetPasswordView.as_view(), name='password-reset'),
+    path('auth/password-reset-confirm/<uidb64>/<token>/', views.ResetPasswordConfirmView.as_view(), name='password-reset-confirm'),
 
     # api
     path('api/getCourses/<int:branch_id>/', views.apiGetCourses, name='api-get-courses'),
