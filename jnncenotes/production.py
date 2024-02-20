@@ -56,10 +56,6 @@ EMAIL_HOST_USER = os.environ.get('EMAIL_ID')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PW')
 
 DEFAULT_FROM_EMAIL = 'Learn Easy<noreply@learneasy.study>'
-EXPIRE_AFTER = "1d"
-HTML_MESSAGE_TEMPLATE = 'notes/verification/html_message_template.html'
-REQUEST_NEW_EMAIL_TEMPLATE = 'notes/verification/request_new_email.html'
-SUBJECT = "Verify your email address"
 
 # Application definition
 
@@ -70,10 +66,17 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sites",
+
+    # django-allauth
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
 
     "notes.apps.NotesConfig",
-    "verify_email.apps.VerifyEmailConfig",
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -86,6 +89,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+
+    "allauth.account.middleware.AccountMiddleware",
 ]
 
 ROOT_URLCONF = "jnncenotes.urls"
@@ -152,6 +157,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
@@ -180,4 +189,28 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-LOGIN_URL = 'notes:login'
+LOGIN_URL = 'account_login'
+LOGIN_REDIRECT_URL = 'notes:home'
+
+# django-allauth
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_PRESERVE_USERNAME_CASING = False
+ACCOUNT_USERNAME_MIN_LENGTH = 4
+ACCOUNT_LOGIN_ON_PASSWORD_RESET = True
+
+ACCOUNT_FORMS = {
+    'login': 'notes.forms.CustomLoginForm',
+    'signup': 'notes.forms.CustomSignUpForm',
+    'reauthenticate': 'notes.forms.CustomReauthenticateForm',
+    'reset_password': 'notes.forms.CustomResetPasswordForm',
+    'add_email': 'notes.forms.CustomAddEmailForm',
+    'set_password': 'notes.forms.CustomSetPasswordForm',
+
+}
+
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
+ACCOUNT_ADAPTER = 'notes.account_adapter.CustomAccountAdapter'
+
+ALLOW_SIGN_UP = os.environ.get("ALLOW_SIGN_UP", "True") == "True"

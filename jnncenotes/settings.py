@@ -67,8 +67,10 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
+    'allauth.socialaccount.providers.google',
 
     "notes.apps.NotesConfig",
+    "rest_framework",
 ]
 
 SITE_ID = 1
@@ -179,7 +181,6 @@ LOGIN_REDIRECT_URL = 'notes:home'
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_EMAIL_NOTIFICATIONS = True
 ACCOUNT_PRESERVE_USERNAME_CASING = False
 ACCOUNT_USERNAME_MIN_LENGTH = 4
 ACCOUNT_LOGIN_ON_PASSWORD_RESET = True
@@ -194,7 +195,23 @@ ACCOUNT_FORMS = {
 
 }
 
-ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
+# ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
 ACCOUNT_ADAPTER = 'notes.account_adapter.CustomAccountAdapter'
 
 ALLOW_SIGN_UP = os.environ.get("ALLOW_SIGN_UP", "True") == "True"
+
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "SCOPE": [
+            "profile",
+            "email",
+        ],
+        "AUTH_PARAMS": {
+            "access_type": "online",
+        },
+        "VERIFIED_EMAIL": True,
+    }
+}
+
+SOCIALACCOUNT_EMAIL_AUTHENTICATION = True
+# SOCIALACCOUNT_LOGIN_ON_GET = True

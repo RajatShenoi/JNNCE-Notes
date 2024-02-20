@@ -1,31 +1,28 @@
 import mimetypes
 
-from django.http import Http404, HttpResponse, JsonResponse
+from django.http import Http404, HttpResponse
 from django.shortcuts import redirect, render
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
-from django.contrib.auth.mixins import UserPassesTestMixin
-from django.contrib.messages.views import SuccessMessageMixin
+from django.urls import reverse, reverse_lazy
 
 from allauth.account.decorators import verified_email_required
 
 from azure.core.exceptions import ClientAuthenticationError, ResourceNotFoundError
-from django.urls import reverse, reverse_lazy
 
 from notes.azure_file_controller import delete_blob, download_blob, upload_file_to_blob
 from notes.exceptions import NotAllowedExtenstionError, UploadBlobError
 from notes.serializer import CourseModuleSerializer, CourseSerializer
 
-from .forms import ContributeForm
+from .forms import ContributeForm, UploadFileForm
 from .models import Branch, Course, CourseModule, File
 
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 # Create your views here.
 def home(request):
-    return render(request, "notes/home.html", {
-       
-    })
+    return render(request, "notes/home.html")
 
 def resources(request):
     crumbs = {
@@ -383,6 +380,7 @@ def deleteFile(request, pk):
     
     return redirect('notes:contributions')
 
+@api_view(['GET'])
 @verified_email_required
 def apiGetCourses(request, branch_id):
     try:
@@ -392,8 +390,9 @@ def apiGetCourses(request, branch_id):
     
     courses = Course.objects.filter(branch=branch)
     serializer = CourseSerializer(courses, many=True)
-    return JsonResponse(serializer.data, safe=False)
+    return Response(serializer.data)
 
+@api_view(['GET'])
 @verified_email_required
 def apiGetModules(request, course_id):
     try:
@@ -403,37 +402,4 @@ def apiGetModules(request, course_id):
     
     course_modules = CourseModule.objects.filter(course=course)
     serializer = CourseModuleSerializer(course_modules, many=True)
-    return JsonResponse(serializer.data, safe=False)
-
-class ResetPasswordView(UserPassesTestMixin, SuccessMessageMixin, PasswordResetView):
-    template_name = 'notes/password_reset/password_reset.html'
-    email_template_name = 'notes/password_reset/password_reset_email.html'
-    html_email_template_name = 'notes/password_reset/password_reset_email.html'
-    subject_template_name = 'notes/password_reset/password_reset_subject.html'
-    
-    success_message = "We've emailed you instructions for setting your password, " \
-                      "if an account exists with the email you entered. You should receive them shortly." \
-                      " If you don't receive an email, " \
-                      "please make sure you've entered the address you registered with, and check your spam folder."
-
-    success_url = reverse_lazy('notes:login')
-
-    def handle_no_permission(self):
-        messages.info(self.request, "You are already logged in")
-        return redirect('notes:home')
-
-    def test_func(self):
-        return self.request.user.is_anonymous
-    
-class ResetPasswordConfirmView(UserPassesTestMixin, SuccessMessageMixin, PasswordResetConfirmView):
-    template_name = 'notes/password_reset/password_reset_confirm.html'
-    success_message = "Your password has been reset. You may login with the new password."
-
-    success_url = reverse_lazy('notes:login')
-
-    def handle_no_permission(self):
-        messages.info(self.request, "You are already logged in")
-        return redirect('notes:home')
-
-    def test_func(self):
-        return self.request.user.is_anonymous
+    return Response(serializer.data)
