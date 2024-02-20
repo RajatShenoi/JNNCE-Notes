@@ -72,8 +72,10 @@ INSTALLED_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
 
     "notes.apps.NotesConfig",
+    "rest_framework",
 ]
 
 SITE_ID = 1
@@ -214,3 +216,18 @@ ACCOUNT_DEFAULT_HTTP_PROTOCOL = "https"
 ACCOUNT_ADAPTER = 'notes.account_adapter.CustomAccountAdapter'
 
 ALLOW_SIGN_UP = os.environ.get("ALLOW_SIGN_UP", "True") == "True"
+
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "SCOPE": [
+            "profile",
+            "email",
+        ],
+        "AUTH_PARAMS": {
+            "access_type": "online",
+        },
+        "VERIFIED_EMAIL": True,
+    }
+}
+
+SOCIALACCOUNT_EMAIL_AUTHENTICATION = True
