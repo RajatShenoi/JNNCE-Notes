@@ -1,0 +1,59 @@
+{% extends "account/base_entrance.html" %}
+{% load i18n %}
+{% load account %}
+{% load allauth %}
+{% block title %}
+    {% trans "Confirm Email Address" %}
+{% endblock title %}
+{% block content %}
+    <div class="text-sm breadcrumbs">
+        <ul>
+            <li><a class="link" href="{% url 'notes:home' %}">Home</a></li>
+            <li>Confirm Email Address</li>
+        </ul>
+    </div>
+    {% if form.errors %}
+        {% for sub, error in form.errors.items %}
+            <div class="p-2">
+                <div role="alert" class="alert alert-error">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6 hidden md:flex" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <span>{{ error }}</span>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
+    {% if confirmation %}
+        {% user_display confirmation.email_address.user as user_display %}
+        {% if can_confirm %}
+            <div class="flex justify-center p-2">
+                <div class="text-2xl">{% blocktrans with confirmation.email_address.email as email %}Please confirm that <a href="mailto:{{ email }}" class="link font-bold">{{ email }}</a> is an email address for user <span class="font-bold">{{ user_display }}</span>.{% endblocktrans %}</div>
+            </div>
+            <div class="flex justify-center">
+                {% url 'account_confirm_email' confirmation.key as action_url %}
+                {% element form method="post" action=action_url %}
+                    {% slot actions %}
+                        {% csrf_token %}
+                        <input class="btn btn-accent" type="submit" value="Confirm">
+                    {% endslot %}
+                {% endelement %}
+            </div>
+        {% else %}
+            <div class="p-2">
+                <div role="alert" class="alert alert-warning">
+                    <span>
+                        {% blocktrans %}Unable to confirm {{ email }} because it is already confirmed by a different account.{% endblocktrans %}
+                    </span>
+                </div>
+            </div>
+        {% endif %}
+    {% else %}
+        {% url 'account_email' as email_url %}
+        <div class="p-2">
+            <div role="alert" class="alert alert-warning">
+                <span>
+                    {% blocktrans %}This email confirmation link expired or is invalid. Please <a href="{{ email_url }}">issue a new email confirmation request</a>.{% endblocktrans %}
+                </span>
+            </div>
+        </div>
+    {% endif %}
+{% endblock content %}

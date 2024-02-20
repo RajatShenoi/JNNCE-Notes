@@ -20,13 +20,6 @@ urlpatterns = [
     path('resources/download/<str:pk>/', views.downloadFile, name='download-file'),
     path('resources/delete/<str:pk>/', views.deleteFile, name='delete-file'),
 
-    # authentication
-    path('auth/register/', views.userRegister, name='register'),
-    path('auth/login/', views.userLogin, name='login'),
-    path('auth/logout/', views.userLogOut, name='logout'),
-    path('auth/password-reset/', views.ResetPasswordView.as_view(), name='password-reset'),
-    path('auth/password-reset-confirm/<uidb64>/<token>/', views.ResetPasswordConfirmView.as_view(), name='password-reset-confirm'),
-
     # api
     path('api/getCourses/<int:branch_id>/', views.apiGetCourses, name='api-get-courses'),
     path('api/getModules/<int:course_id>/', views.apiGetModules, name='api-get-modules'),

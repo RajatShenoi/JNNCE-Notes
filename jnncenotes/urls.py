@@ -19,8 +19,12 @@ from django.contrib import admin
 from django.urls import include, path
 
 urlpatterns = [
+    # admin site
     path("admin/", admin.site.urls),
 
+    # notes app
     path("", include("notes.urls")),
-    path('verification/', include('verify_email.urls')),
+
+    # django-allauth
+    path("accounts/", include("allauth.urls")),
 ]

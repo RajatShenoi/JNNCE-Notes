@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% load i18n %}
+{% load allauth %}
+
+{% block title %}
+    {% trans "Account Inactive" %}
+{% endblock title %}
+
+{% block content %}
+    <div class="text-sm breadcrumbs">
+        <ul>
+            <li><a class="link" href="{% url 'notes:home' %}">Home</a></li>
+            <li>Account Inactive</li>
+        </ul>
+    </div>
+    <div class="p-2">
+        <div role="alert" class="alert alert-warning">
+            <span>
+                This account is "inactive" (disabled). This could be due to various reasons, such as violating our policies 
+                or not verifying your email address for a long time after registration. You cannot proceed to login with this email.
+                Kindly <a class="link" href="mailto:{{contact_email}}">contact us</a> for further information. We reserve the right to
+                delete your account if it was disabled due to non-confirmation of email without notice.
+            </span>
+        </div>
+    </div>
+{% endblock content %}
