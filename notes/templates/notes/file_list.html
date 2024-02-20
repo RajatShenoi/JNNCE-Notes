@@ -19,7 +19,7 @@
             <tbody>
             {% for file in files %}
                 <tr>
-                    <td>{{ file.file_name }}</td>
+                    <td class="font-bold">{{ file.file_name }}</td>
                     <td><a href="{% url 'notes:download-file' file.pk %}" class="link" target="_blank">Download</a></td>
                     <td>@{{ file.user }}</td>
                     <td>{{ file.date_created }}</td>

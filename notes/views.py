@@ -1,33 +1,28 @@
 import mimetypes
 
-from django.http import Http404, HttpResponse, JsonResponse
+from django.http import Http404, HttpResponse
 from django.shortcuts import redirect, render
 from django.contrib import messages
-from django.contrib.auth import logout, login, authenticate
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.contrib.auth.views import PasswordResetView, PasswordResetConfirmView
-from django.contrib.auth.mixins import UserPassesTestMixin
-from django.contrib.messages.views import SuccessMessageMixin
+from django.urls import reverse, reverse_lazy
+
+from allauth.account.decorators import verified_email_required
 
 from azure.core.exceptions import ClientAuthenticationError, ResourceNotFoundError
-from django.urls import reverse, reverse_lazy
 
 from notes.azure_file_controller import delete_blob, download_blob, upload_file_to_blob
 from notes.exceptions import NotAllowedExtenstionError, UploadBlobError
 from notes.serializer import CourseModuleSerializer, CourseSerializer
 
-from verify_email.email_handler import send_verification_email
-
-from .forms import ContributeForm, LoginForm, RegisterForm, UploadFileForm
+from .forms import ContributeForm, UploadFileForm
 from .models import Branch, Course, CourseModule, File
 
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 # Create your views here.
 def home(request):
-    return render(request, "notes/home.html", {
-       
-    })
+    return render(request, "notes/home.html")
 
 def resources(request):
     crumbs = {
@@ -129,110 +124,7 @@ def displayFileList(request, branch_code, course_code, pk):
         "crumbs": crumbs,
     })
 
-def userRegister(request):
-    if request.user.is_authenticated:
-        messages.info(request, "You are already logged in")
-        return redirect('notes:home')
-    crumbs = {
-        "path": {
-            "Home": reverse("notes:home"),
-        },
-        "current": "Register",
-    }
-    if request.method == "POST":
-        form = RegisterForm(request.POST)
-        if form.is_valid():
-            try:
-                try:
-                    user = User.objects.get(email=form.cleaned_data['email'])
-                    messages.error(request, "User with this email already exists")
-                    return render(request, 'notes/register.html', {
-                        "form": form,
-                        "crumbs": crumbs,
-                    })
-                except User.DoesNotExist:
-                    user = send_verification_email(request, form)
-                    user.username = user.username.lower()
-                    user.save()
-                    messages.success(request, f"Account created successfully for {user.email}. Kindly check your email for a verification link.")
-                    return redirect('notes:home')
-            except Exception as e:
-                messages.error(request, f"There was an error. Contact us with:  Error: {e}")
-                return render(request, 'notes/register.html', {
-                    "form": form,
-                    "crumbs": crumbs,
-                })
-        else:
-            for error in form.errors:
-                messages.error(request, f"{error}: {form.errors[error][0]}")
-            return render(request, 'notes/register.html', {
-                "form": form,
-                "crumbs": crumbs,
-            })
-        
-    form = RegisterForm()
-    return render(request, 'notes/register.html', {
-        "form": form,
-        "crumbs": crumbs,
-    })
-    
-def userLogin(request):
-    if request.user.is_authenticated:
-        messages.info(request, "You are already logged in")
-        return redirect('notes:home')
-    
-    crumbs = {
-        "path": {
-            "Home": reverse("notes:home"),
-        },
-        "current": "Login",
-    }
-
-    if request.method == "POST":
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            username = form.cleaned_data['username'].lower()
-            password = form.cleaned_data['password']
-            user = authenticate(request, username=username, password=password)
-            if user is not None:
-                login(request, user)
-                next = request.GET.get('next')
-                if next:
-                    return redirect(next)
-                return redirect('notes:home')
-            else:
-                temp_user = User.objects.filter(username=username)
-                if temp_user.exists():
-                    temp_user = temp_user.first()
-                    if temp_user.is_active == False:
-                        messages.warning(request, "Account not verified. A verification link was sent earlier. Kindly check your email.")
-                        return render(request, 'notes/login.html', {
-                            "form": form,
-                            "crumbs": crumbs,
-                        })
-                messages.error(request, "Invalid username or password")
-                return render(request, 'notes/login.html', {
-                    "form": form,
-                    "crumbs": crumbs,
-                })
-        else:
-            for error in form.errors:
-                messages.error(request, f"{error}: {form.errors[error][0]}")
-            return render(request, 'notes/login.html', {
-                "form": form,
-            })
-    
-    form = LoginForm()
-    return render(request, 'notes/login.html', {
-        "form": form,
-        "crumbs": crumbs,
-    })
-
-def userLogOut(request):
-    logout(request)
-    return redirect('notes:home')
-
-@login_required
+@verified_email_required
 def contribute(request):
     if request.method == "POST":
         form = ContributeForm(request.POST, request.FILES)
@@ -296,7 +188,7 @@ def contribute(request):
         "form": form,
     })
 
-@login_required
+@verified_email_required
 def uploadFile(request, branch_code, course_code):
     try:
         branch = Branch.objects.get(code=branch_code)
@@ -422,7 +314,7 @@ def downloadFile(request, pk):
         return response
     return Http404
 
-@login_required
+@verified_email_required
 def contributions(request):
     crumbs = {
         "path": {
@@ -461,7 +353,7 @@ def topContributors(request):
         "contrib": contrib,
     })
 
-@login_required
+@verified_email_required
 def deleteFile(request, pk):
     try:
         file = File.objects.get(pk=pk)
@@ -488,6 +380,8 @@ def deleteFile(request, pk):
     
     return redirect('notes:contributions')
 
+@api_view(['GET'])
+@verified_email_required
 def apiGetCourses(request, branch_id):
     try:
         branch = Branch.objects.get(pk=branch_id)
@@ -496,8 +390,10 @@ def apiGetCourses(request, branch_id):
     
     courses = Course.objects.filter(branch=branch)
     serializer = CourseSerializer(courses, many=True)
-    return JsonResponse(serializer.data, safe=False)
+    return Response(serializer.data)
 
+@api_view(['GET'])
+@verified_email_required
 def apiGetModules(request, course_id):
     try:
         course = Course.objects.get(pk=course_id)
@@ -506,37 +402,4 @@ def apiGetModules(request, course_id):
     
     course_modules = CourseModule.objects.filter(course=course)
     serializer = CourseModuleSerializer(course_modules, many=True)
-    return JsonResponse(serializer.data, safe=False)
-
-class ResetPasswordView(UserPassesTestMixin, SuccessMessageMixin, PasswordResetView):
-    template_name = 'notes/password_reset/password_reset.html'
-    email_template_name = 'notes/password_reset/password_reset_email.html'
-    html_email_template_name = 'notes/password_reset/password_reset_email.html'
-    subject_template_name = 'notes/password_reset/password_reset_subject.html'
-    
-    success_message = "We've emailed you instructions for setting your password, " \
-                      "if an account exists with the email you entered. You should receive them shortly." \
-                      " If you don't receive an email, " \
-                      "please make sure you've entered the address you registered with, and check your spam folder."
-
-    success_url = reverse_lazy('notes:login')
-
-    def handle_no_permission(self):
-        messages.info(self.request, "You are already logged in")
-        return redirect('notes:home')
-
-    def test_func(self):
-        return self.request.user.is_anonymous
-    
-class ResetPasswordConfirmView(UserPassesTestMixin, SuccessMessageMixin, PasswordResetConfirmView):
-    template_name = 'notes/password_reset/password_reset_confirm.html'
-    success_message = "Your password has been reset. You may login with the new password."
-
-    success_url = reverse_lazy('notes:login')
-
-    def handle_no_permission(self):
-        messages.info(self.request, "You are already logged in")
-        return redirect('notes:home')
-
-    def test_func(self):
-        return self.request.user.is_anonymous
+    return Response(serializer.data)

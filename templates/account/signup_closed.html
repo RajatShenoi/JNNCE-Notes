@@ -1,0 +1,21 @@
+{% extends "account/base_entrance.html" %}
+{% load i18n %}
+{% load allauth %}
+{% block title %}
+    {% trans "Sign Up Closed" %}
+{% endblock title %}
+{% block content %}
+    <div class="text-sm breadcrumbs">
+        <ul>
+            <li><a class="link" href="{% url 'notes:home' %}">Home</a></li>
+            <li>Register</li>
+        </ul>
+    </div>
+    <div class="p-2">
+        <div role="alert" class="alert alert-warning">
+            <span>
+                {% trans "We are sorry, but registrations are currently closed. We will be opening it soon." %}
+            </span>
+        </div>
+    </div>
+{% endblock content %}
