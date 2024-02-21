@@ -50,7 +50,7 @@ def displayCourseList(request, branch_code):
     except Branch.DoesNotExist:
         raise Http404
     
-    courses = Course.objects.filter(branch=branch)
+    courses = Course.objects.filter(branch=branch).order_by('code')
 
     return render(request, "notes/course_list.html", {
         "branch": branch,

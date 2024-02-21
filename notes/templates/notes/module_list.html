@@ -16,7 +16,13 @@
             <tbody>
             {% for module in course_modules %}
                 <tr>
-                    <td><a href="{% url 'notes:display-file-list' branch.code course.code module.pk %}" class="link font-bold">{{module.name}}</a></td>
+                    <td><a href="{% url 'notes:display-file-list' branch.code course.code module.pk %}" class="link font-bold">
+                        {% if module.number == 0 %}
+                            {{module.name}}
+                        {% else %}
+                            [Module {{module.number}}] {{module.name}}
+                        {% endif %}
+                    </a></td>
                     <td>{{module.no_of_files}}</td>
                 </tr>
             {% endfor %}
