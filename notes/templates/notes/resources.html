@@ -9,9 +9,9 @@
         <span class="text-success">First and second semester</span> resources are available under "First Year - Common Branch".
         Resources for third semester onwards are available under the respective branch.
     </p>
-    <ul class="list-disc my-2 menu text-base">
+    <ul class="list-disc menu text-base">
         {% for branch in branches %}
-            <li><a href="{% url 'notes:display-course-list' branch.code %}" class="outline">{{branch.name }} ({{ branch.code }})</a></li>
+            <li><a href="{% url 'notes:display-course-list' branch.code %}" class="outline my-2">{{branch.name }} ({{ branch.code }})</a></li>
         {% endfor %}
     </ul>
     <!-- <p class="italic"><span class="underline">Please note:</span> Currently, we have received resources for First Year only. If you have
