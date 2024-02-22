@@ -3,7 +3,7 @@
 {% block title %}Resource list for {{course.name}}{% endblock %}
 
 {% block content %}
-    <h1 class="text-2xl font-bold mt-2">List of resources for {{course.name}}</h1>
+    <h1 class="text-2xl font-bold mt-2">List of resources for {{course.name}}:</h1>
     <a href="{% url 'notes:upload-file' branch.code course.code %}" class="btn btn-accent btn-sm mt-2">Contribute</a>
     <div class="overflow-x-auto mt-2">
         <table class="table">

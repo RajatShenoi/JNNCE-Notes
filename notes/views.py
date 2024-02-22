@@ -31,7 +31,8 @@ def resources(request):
         },
         "current": "Resources",
     }
-    branches = Branch.objects.all().order_by('order')
+    
+    branches = Branch.objects.filter(course__coursemodule__file__isnull=False, course__coursemodule__file__approved=1).distinct().order_by('order')
     return render(request, "notes/resources.html", {
         "crumbs": crumbs,
         "branches": branches,
@@ -50,8 +51,7 @@ def displayCourseList(request, branch_code):
     except Branch.DoesNotExist:
         raise Http404
     
-    courses = Course.objects.filter(branch=branch).order_by('code')
-
+    courses = Course.objects.filter(branch=branch, coursemodule__file__isnull=False, coursemodule__file__approved=1).distinct().order_by('code')
     return render(request, "notes/course_list.html", {
         "branch": branch,
         "courses": courses,
@@ -76,18 +76,13 @@ def displayModuleList(request, branch_code, course_code):
     if branch not in course.branch.all():
         raise Http404
 
-    course_modules = CourseModule.objects.filter(course=course).order_by('number')
-
-    count = {}
-    for module in course_modules:
-        count[str(module)] = File.objects.filter(course_module = module, approved = 1).count()
+    course_modules = CourseModule.objects.filter(course=course, file__isnull=False, file__approved=1).distinct().order_by('number')
 
     return render(request, "notes/module_list.html", {
         "branch": branch,
         "course": course,
         "course_modules": course_modules,
         "crumbs": crumbs,
-        "count": count,
     })
 
 def displayFileList(request, branch_code, course_code, pk):

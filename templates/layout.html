@@ -6,7 +6,6 @@
     <script src="{% static 'scripts.js' %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
     <meta name="viewport" content="width=device-width" inital-scale="1.0" />
-    <script src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8939658231109065"crossorigin="anonymous"></script>
 </head>
 <body class="mx-auto">
     {% include 'navbar.html' %}
@@ -52,6 +51,16 @@
         {% block content %}
         {% endblock %}
 
+        <!-- End Scripts -->
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-2EB3D0ZN5M"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-2EB3D0ZN5M');
+        </script>
         {% block scripts %}
         {% endblock %}
     </main>
