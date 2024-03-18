@@ -1,0 +1,12 @@
+{% extends "send_email_template.html" %}
+
+{% load account %}
+{% load i18n %}
+
+{% block email_title %}Email Confirmed!{% endblock %}
+
+{% block heading %}Email Confirmed!{% endblock %}
+
+{% block email_content %}
+{% include 'account/email/email_confirm_message.txt' %}
+{% endblock %}

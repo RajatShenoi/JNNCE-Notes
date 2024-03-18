@@ -1,0 +1,12 @@
+{% extends "send_email_template.html" %}
+
+{% load account %}
+{% load i18n %}
+
+{% block email_title %}Email Deleted{% endblock %}
+
+{% block heading %}Email Deleted{% endblock %}
+
+{% block email_content %}
+{% include 'account/email/email_deleted_message.txt' %}
+{% endblock %}

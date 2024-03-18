@@ -1,0 +1,12 @@
+{% extends "send_email_template.html" %}
+
+{% load account %}
+{% load i18n %}
+
+{% block email_title %}Social Account Connected{% endblock %}
+
+{% block heading %}Social Account Connected{% endblock %}
+
+{% block email_content %}
+{% include 'socialaccount/email/account_connected_message.txt' %}
+{% endblock %}

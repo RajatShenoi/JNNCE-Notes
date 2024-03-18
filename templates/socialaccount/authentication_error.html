@@ -1,12 +1,23 @@
 {% extends "socialaccount/base_entrance.html" %}
 {% load i18n %}
 {% load allauth %}
-{% block head_title %}
+
+{% block title %}
     {% trans "Third-Party Login Failure" %}
-{% endblock head_title %}
+{% endblock title %}
+
 {% block content %}
-    {% element h1 %}
-        {% trans "Third-Party Login Failure" %}
-    {% endelement %}
-    <p>{% trans "An error occurred while attempting to login via your third-party account." %}</p>
+    <div class="text-sm breadcrumbs">
+        <ul>
+            <li><a class="link" href="{% url 'notes:home' %}">Home</a></li>
+            <li>Third-Party Login Failure</li>
+        </ul>
+    </div>
+    <div class="p-2">
+        <div role="alert" class="alert alert-warning">
+            <span>
+                An error occurred while attempting to login via your third-party account. Please try again. Kindly <a class="link" href="mailto:{{contact_email}}">contact us</a> if this keeps occurring after mutlitple attempts.
+            </span>
+        </div>
+    </div>
 {% endblock content %}

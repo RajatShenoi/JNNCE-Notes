@@ -1,4 +1,4 @@
 {% load i18n %}
 {% autoescape off %}
-{% blocktrans %}Email Removed{% endblocktrans %}
+{% blocktrans %}Email Removed | {{website_name}}{% endblocktrans %}
 {% endautoescape %}

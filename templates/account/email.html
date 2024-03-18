@@ -104,6 +104,11 @@
         {% endelement %}
         </div>
     {% endif %}
+    <!-- socialaccount_connections -->
+    <div class="divider"></div>
+    <div class="flex justify-center">
+        <a class="btn btn-sm btn-warning" href="{% url 'socialaccount_connections' %}">Manage Social Account Connections</a>
+    </div>
 {% endblock content %}
 {% block scripts %}
     <script type="text/javascript">

@@ -56,6 +56,11 @@ def save_file_url_to_db(file_url, display_name, ext, user, course_module):
         course_module=course_module,
     )
     new_file.save()
+
+    if user.groups.filter(name="teacher").exists():
+        new_file.approved = 1
+        new_file.save()
+
     return new_file
 
 def upload_file_to_blob(file, display_name, user, course_module):

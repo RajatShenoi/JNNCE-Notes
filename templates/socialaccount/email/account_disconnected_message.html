@@ -1,0 +1,12 @@
+{% extends "send_email_template.html" %}
+
+{% load account %}
+{% load i18n %}
+
+{% block email_title %}Social Account Disconnected{% endblock %}
+
+{% block heading %}Social Account Disconnected{% endblock %}
+
+{% block email_content %}
+{% include 'socialaccount/email/account_disconnected_message.txt' %}
+{% endblock %}

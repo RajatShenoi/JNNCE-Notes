@@ -1,0 +1,12 @@
+{% extends "send_email_template.html" %}
+
+{% load account %}
+{% load i18n %}
+
+{% block email_title %}Email Changed{% endblock %}
+
+{% block heading %}Email Changed{% endblock %}
+
+{% block email_content %}
+{% include 'account/email/email_changed_message.txt' %}
+{% endblock %}

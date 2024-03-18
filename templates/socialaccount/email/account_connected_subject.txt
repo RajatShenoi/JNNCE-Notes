@@ -1,4 +1,4 @@
 {% load i18n %}
 {% autoescape off %}
-{% blocktrans %}Third-Party Account Connected{% endblocktrans %}
+{% blocktrans %}Third-Party Account Connected | {{website_name}}{% endblocktrans %}
 {% endautoescape %}

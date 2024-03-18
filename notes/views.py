@@ -261,7 +261,10 @@ def uploadFile(request, branch_code, course_code):
                         "course": course,
                         "crumbs": crumbs,
                     })
-            messages.success(request, "Thank you for contributing! A moderator will need to approve the file before it is made public.")
+            if request.user.groups.filter(name="teacher").exists():
+                messages.success(request, "Thank you for contributing! The resource uploaded is now public.")
+            else:
+                messages.success(request, "Thank you for contributing! A moderator will need to approve the file before it is made public.")
             return redirect('notes:contributions')
         else:
             messages.error(request, "Invalid form")
@@ -321,10 +324,13 @@ def contributions(request):
 
     if len(files) == 0:
         messages.info(request, "You have not contributed any files yet.")
+
+    teacher = request.user.groups.filter(name="teacher").exists()
     
     return render(request, "notes/contributions.html", {
         "files": files,
         "crumbs": crumbs,
+        "teacher": teacher,
     })
 
 def topContributors(request):
@@ -383,7 +389,7 @@ def apiGetCourses(request, branch_id):
     except Branch.DoesNotExist:
         raise Http404
     
-    courses = Course.objects.filter(branch=branch)
+    courses = Course.objects.filter(branch=branch).order_by('code')
     serializer = CourseSerializer(courses, many=True)
     return Response(serializer.data)
 
@@ -395,6 +401,6 @@ def apiGetModules(request, course_id):
     except Course.DoesNotExist:
         raise Http404
     
-    course_modules = CourseModule.objects.filter(course=course)
+    course_modules = CourseModule.objects.filter(course=course).order_by('number')
     serializer = CourseModuleSerializer(course_modules, many=True)
     return Response(serializer.data)

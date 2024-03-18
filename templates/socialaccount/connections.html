@@ -1,52 +1,99 @@
 {% extends "socialaccount/base_manage.html" %}
 {% load i18n %}
 {% load allauth %}
-{% block head_title %}
+
+{% block title %}
     {% trans "Account Connections" %}
-{% endblock head_title %}
+{% endblock title %}
+
 {% block content %}
-    {% element h1 %}
-        {% trans "Account Connections" %}
-    {% endelement %}
+    <div class="text-sm breadcrumbs">
+        <ul>
+            <li><a class="link" href="{% url 'notes:home' %}">Home</a></li>
+            <li><a class="link" href="{% url 'account_email' %}">Settings</a></li>
+            <li>Account Connections</li>
+        </ul>
+    </div>
     {% if form.accounts %}
-        <p>
-            {% blocktrans %}You can sign in to your account using any of the following third-party accounts:{% endblocktrans %}
-        </p>
+        <div class="flex justify-center pt-2">
+            <span class="text-xl font-bold">You can sign in to your account using any of the following third-party accounts:</span>
+        </div>
         {% url 'socialaccount_connections' as action_url %}
         {% element form form=form method="post" action=action_url %}
             {% slot body %}
                 {% csrf_token %}
-                {% for acc in form.fields.account.choices %}
-                    {% with account=acc.0.instance.get_provider_account %}
-                        {% setvar radio_id %}
-                            id_account_{{ account.account.pk }}
-                        {% endsetvar %}
-                        {% setvar tags %}
-                            socialaccount,{{ account.account.provider }}
-                        {% endsetvar %}
-                        {% element field id=radio_id type="radio" name="account" value=account.account.pk %}
-                            {% slot label %}
-                                {{ account }}
-                                {% element badge tags=tags %}
-                                    {{ account.get_brand.name }}
-                                {% endelement %}
-                            {% endslot %}
-                        {% endelement %}
-                    {% endwith %}
-                {% endfor %}
+                <div class="overflow-x-auto">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Account Name</th>
+                                <th>Provider</th>
+                                <th>Select</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for acc in form.fields.account.choices %}
+                                {% with account=acc.0.instance.get_provider_account %}
+                                    {% setvar radio_id %}
+                                        id_account_{{ account.account.pk }}
+                                    {% endsetvar %}
+                                    {% setvar tags %}
+                                        socialaccount,{{ account.account.provider }}
+                                    {% endsetvar %}
+                                    <tr>
+                                        <td>{{ account }}</td>
+                                        <td>{{ account.get_brand.name }}</td>
+                                        <td><input class="radio radio-primary" type="radio" name="account" value="{{account.account.pk}}" id="{{radio_id}}"></td>
+                                    </tr>
+                                {% endwith %}
+                            {% endfor %}
+                            {% for radio in emailaddress_radios %}
+                                <tr>
+                                        <td>{{ radio.emailaddress.email }}</td>
+                                        <td>
+                                            {% if radio.emailaddress.verified %}
+                                                {% element badge tags="success,email,verified" %}
+                                                    {% translate "Verified" %}
+                                                {% endelement %}
+                                            {% else %}
+                                                {% element badge tags="warning,email,unverified" %}
+                                                    {% translate "Unverified" %}
+                                                {% endelement %}
+                                            {% endif %}
+                                            {% if radio.emailaddress.primary %}
+                                                {% element badge tags="email,primary" %}
+                                                    {% translate "Primary" %}
+                                                {% endelement %}
+                                            {% endif %}
+                                        </td>
+                                        <td><input class="radio radio-primary" type="radio" name="email" checked="{{radio.checked}}" value="{{radio.emailaddress.email}}" id="{{radio.id}}"></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             {% endslot %}
-            {% slot actions %}
-                {% element button tags="delete,danger" type="submit" %}
-                    {% trans 'Remove' %}
-                {% endelement %}
-            {% endslot %}
+            <div class="overflow-x-auto">
+                {% slot actions %}
+                    <div class="mt-4">
+                        <button class="btn btn-sm btn-warning" type="submit" name="action_remove">Remove</button>
+                    </div>
+                {% endslot %}
+            </div>
         {% endelement %}
     {% else %}
-        <p>{% trans 'You currently have no third-party accounts connected to this account.' %}</p>
+        <div role="alert" class="alert alert-info">
+            <span>
+                You currently have no third-party accounts connected to this account.
+            </span>
+        </div>
     {% endif %}
-    {% element h2 %}
-        {% trans 'Add a Third-Party Account' %}
-    {% endelement %}
-    {% include "socialaccount/snippets/provider_list.html" with process="connect" %}
-    {% include "socialaccount/snippets/login_extra.html" %}
+    <div class="divider"></div>
+    <div class="flex justify-center">
+        <span class="text-xl font-bold">Connect a new Social Account:</span>
+    </div>
+    <div class="flex justify-center p-2">
+        {% include "socialaccount/snippets/provider_list.html" with process="connect" %}
+        {% include "socialaccount/snippets/login_extra.html" %}
+    </div>
 {% endblock content %}

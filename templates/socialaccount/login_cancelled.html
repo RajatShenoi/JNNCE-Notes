@@ -1,15 +1,23 @@
 {% extends "socialaccount/base_entrance.html" %}
 {% load i18n %}
 {% load allauth %}
+
 {% block title %}
     {% trans "Login Cancelled" %}
 {% endblock title %}
+
 {% block content %}
-    {% element h1 %}
-        {% trans "Login Cancelled" %}
-    {% endelement %}
-    {% url 'account_login' as login_url %}
-    <p>
-        {% blocktrans %}You decided to cancel logging in to our site using one of your existing accounts. If this was a mistake, please proceed to <a href="{{login_url}}">sign in</a>.{% endblocktrans %}
-    </p>
+    <div class="text-sm breadcrumbs">
+        <ul>
+            <li><a class="link" href="{% url 'notes:home' %}">Home</a></li>
+            <li>Login Cancelled</li>
+        </ul>
+    </div>
+    <div class="p-2">
+        <div role="alert" class="alert alert-warning">
+            <span>
+                You decided to cancel logging in to our site using one of your existing accounts. If this was a mistake, please proceed to <a href="{{login_url}}" class="link">sign in</a>.
+            </span>
+        </div>
+    </div>
 {% endblock content %}
