@@ -209,7 +209,11 @@ def uploadFile(request, branch_code, course_code):
         if form.is_valid():
             display_name = form.cleaned_data['name']
             file = form.cleaned_data['file']
-            if file.size > 5242880:
+            acceptable_size = 5242880
+            if request.user.groups.filter(name="teacher").exists():
+                acceptable_size = 10485760
+            
+            if file.size > acceptable_size:
                 messages.error(request, "You cannot upload file more than 5Mb")
                 return render(request, 'notes/upload.html', {
                     "form": form,
@@ -404,3 +408,15 @@ def apiGetModules(request, course_id):
     course_modules = CourseModule.objects.filter(course=course).order_by('number')
     serializer = CourseModuleSerializer(course_modules, many=True)
     return Response(serializer.data)
+
+def contact(request):
+    crumbs = {
+        "path": {
+            "Home": reverse("notes:home"),
+        },
+        "current": "Contact",
+    }
+
+    return render(request, "notes/contact.html", {
+        "crumbs": crumbs,
+    })

@@ -70,7 +70,6 @@
                         <button class="btn btn-sm btn-primary" type="submit" name="action_primary">Make Primary</button>
                         <button class="btn btn-sm btn-secondary" type="submit" name="action_send">Re-send verification</button>
                         <button class="btn btn-sm btn-warning" type="submit" name="action_remove">Remove</button>
-                        <a class="btn btn-sm btn-accent" type="submit" href="{% url 'account_change_password' %}">Change Password</a>
                     </div>
                 {% endslot %}
             </div>
@@ -107,7 +106,13 @@
     <!-- socialaccount_connections -->
     <div class="divider"></div>
     <div class="flex justify-center">
+        <span class="text-xl font-bold">Other Actions:</span>
+    </div>
+    <div class="flex justify-center mt-2" >
         <a class="btn btn-sm btn-warning" href="{% url 'socialaccount_connections' %}">Manage Social Account Connections</a>
+    </div>
+    <div class="flex justify-center mt-2">
+        <a class="btn btn-sm btn-secondary" href="{% url 'account_change_password' %}">Change Password</a>
     </div>
 {% endblock content %}
 {% block scripts %}

@@ -9990,6 +9990,10 @@ html:has(.drawer-open.drawer-open) {
   margin-top: 1.25rem;
 }
 
+.ml-4 {
+  margin-left: 1rem;
+}
+
 .box-border {
   box-sizing: border-box;
 }

@@ -32,6 +32,7 @@
                 </ul>
             </div>
             {% endif %}
+            <a class="btn btn-ghost btn-sm rounded-btn" href="{% url 'notes:contact' %}">Contact</a>
         </div>
         <!-- Theme button and dropdown -->
         <div class="flex items-stretch">
@@ -79,6 +80,7 @@
             <li><a href="{% url 'notes:home' %}"> Home </a></li>
             <li><a href="{% url 'notes:resources' %}">Resources</a></li>
             <li><a href="{% url 'notes:top-contributors' %}">Top Contributors</a></li>
+            <li><a href="{% url 'notes:contact' %}">Contact</a></li>
             {% if not request.user.is_authenticated %}
                 <li><a href="{% url 'account_login' %}"> Login </a></li>
                 <li><a href="{% url 'account_signup' %}"> Register </a><li>

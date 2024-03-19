@@ -1,0 +1,49 @@
+{% extends 'layout.html' %}
+
+{% block title %}Contact{% endblock %}
+
+{% block content %}
+<div>
+    For any queries, please contact us at <a class="link font-bold" href="mailto:{{ contact_email }}">{{ contact_email }}</a>.
+    Our normal response time is 48 hours, but it might take a little longer during busy periods.
+    <br><br>
+    Certain points to keep in mind while contacting us, this will help us respond faster:
+    <ul class="list-disc ml-4">
+        <li><b>For account related queries:</b> kindly include your <i>username</i>
+        and contact us only using your <i>primary and <b>verified</b> email</i>.</li>
+
+        <li><b>For resource deletion requests:</b> kindly include your <i>username</i>
+        and contact us only using your <i>primary and <b>verified</b> email</i>. 
+        Kindly also mention the <i>name of the file(s)</i> that you'd like to delete.</li>
+
+        <li><b>For requesting teacher privileges:</b> we are glad that you as a teacher is interested in
+        contributing to this community. Kindly visit the <a href="{% url 'account_email' %}" class="link">settings</a>
+        page and make sure you add and verify your <b>college issued email</b>. After that's done, kindly contact us 
+        using your college issued email after that's done and we'll convert your account to a teacher account.</li>
+    </ul>
+    <br>
+    Teacher account privileges:
+    <ul class="list-disc ml-4">
+        <li>Moderator approval for each uploaded resource is <b>not required</b>.</li>
+        <li>File size limit of <b>10MB</b> per resource. Regular limit is 5MB.</li>
+        <li>Delete self uploaded resources <b>without</b> contacting support.</li>
+    </ul>
+    <br>
+    <b>Contributing:</b>
+    If you're interested in contributing to this website, you will find our GitHub repo here: <a href="https://github.com/RajatShenoi/JNNCE-Notes" class="link">https://github.com/RajatShenoi/JNNCE-Notes</a>.
+    If you find any bugs or have any feature requests, feel free to open an issue or make a pull request.
+    <br><br>
+    <b>Current status:</b>
+    <ul class="list-disc ml-4">
+        <li><img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/RajatShenoi/JNNCE-Notes/main_jnncenotes.yml"></li>
+        <li><img alt="GitHub deployments" src="https://img.shields.io/github/deployments/RajatShenoi/JNNCE-Notes/Production?label=Production"></li>
+        <li><img alt="GitHub commit activity" src="https://img.shields.io/github/commit-activity/m/RajatShenoi/JNNCE-Notes"></li>
+        <li><img alt="GitHub language count" src="https://img.shields.io/github/languages/count/RajatShenoi/JNNCE-Notes"></li>
+        <li><img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/RajatShenoi/JNNCE-Notes"></li>
+        <li><img alt="GitHub Issues or Pull Requests" src="https://img.shields.io/github/issues/RajatShenoi/JNNCE-Notes"></li>
+        <li><img alt="GitHub Issues or Pull Requests" src="https://img.shields.io/github/issues-closed/RajatShenoi/JNNCE-Notes"></li>
+        <li><img alt="GitHub Issues or Pull Requests" src="https://img.shields.io/github/issues-pr/RajatShenoi/JNNCE-Notes"></li>
+        <li><img alt="GitHub Issues or Pull Requests" src="https://img.shields.io/github/issues-pr-closed/RajatShenoi/JNNCE-Notes"></li>
+    </ul>
+</div>
+{% endblock %}

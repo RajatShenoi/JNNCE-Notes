@@ -15,6 +15,8 @@ urlpatterns = [
     path('my-contributions/', views.contributions, name='contributions'),
     path('contribute/', views.contribute, name='contribute'),
 
+    path('contact/', views.contact, name='contact'),
+
     # azure blob storage
     path('resources/contribute/<str:branch_code>/<str:course_code>/', views.uploadFile, name='upload-file'),
     path('resources/download/<str:pk>/', views.downloadFile, name='download-file'),
