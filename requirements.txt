@@ -14,7 +14,7 @@ defusedxml==0.7.1
 Django==5.0.3
 django-allauth==0.61.1
 djangorestframework==3.14.0
-idna==3.6
+idna==3.7
 isodate==0.6.1
 msal==1.26.0
 msal-extensions==1.1.0
