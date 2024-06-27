@@ -1,7 +1,7 @@
 asgiref==3.7.2
 azure-common==1.1.28
 azure-core==1.30.0
-azure-identity==1.15.0
+azure-identity==1.16.1
 azure-keyvault-secrets==4.7.0
 azure-storage-blob==12.19.0
 black==24.3.0
@@ -16,7 +16,7 @@ django-allauth==0.61.1
 djangorestframework==3.14.0
 idna==3.7
 isodate==0.6.1
-msal==1.26.0
+msal==1.28.0
 msal-extensions==1.1.0
 mypy-extensions==1.0.0
 oauthlib==3.2.2
